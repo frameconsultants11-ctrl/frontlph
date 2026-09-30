@@ -31,7 +31,7 @@ export async function GET(request, { params }) {
      * Store referral code for 30 days
      */
     const response = NextResponse.redirect(
-      new URL("/login", request.url)
+      new URL("/auth", request.url)
     );
 
     response.cookies.set(
