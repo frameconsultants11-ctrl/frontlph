@@ -15,7 +15,7 @@ export default async function Page(){
         <WalletPage />
         </div>
         <div className="w-full sm:w-2/5">
-            <ReferralShareCard referralCode={session?.user?.referralCode} domain='http://localhost:3000' />
+            <ReferralShareCard referralCode={session?.user?.referralCode} domain='https://frontlph.vercel.app' />
             </div>
         </div>
         </>
