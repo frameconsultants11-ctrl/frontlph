@@ -508,12 +508,12 @@ const MobileMenu = ({ isOpen, onClose }) => {
             ================================================== */}
 
             <div className="mt-2 flex flex-col gap-4">
-              <button
-                type="button"
+              <Link
+                href="/auth"
                 className="w-full py-2.5 text-white font-medium text-sm border border-white/20 rounded-full hover:bg-white/10 transition-colors"
               >
                 Login
-              </button>
+              </Link>
 
               <button
                 type="button"
@@ -656,7 +656,7 @@ export default function Navbar({session}) {
 
           <div className="hidden lg:flex items-center gap-6 z-50">
            {!session && <a
-              href="#"
+              href="/auth"
               className={`text-sm font-medium transition-colors ${
                 isScrolled ? 'text-green-800 hover:text-green-600' : 'text-green-800 hover:text-green-700'
               }`}
