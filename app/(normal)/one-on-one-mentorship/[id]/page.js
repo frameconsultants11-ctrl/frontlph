@@ -49,7 +49,7 @@ export default async function Page({params}) {
             h-fit
           "
         >
-          <MentorBook  />
+          <MentorBook trainer={trainer}  />
         </div>
       </div>
 

@@ -8,7 +8,7 @@ import {
   Zap,
 } from "lucide-react";
 
-export default function MentorBook() {
+export default function MentorBook({trainer}) {
   return (
     <aside className="w-full lg:w-[380px] shrink-0 sticky top-24 font-sans">
       <div className="relative overflow-hidden bg-white rounded-2xl border border-green-800/20 p-6">
@@ -45,11 +45,11 @@ export default function MentorBook() {
           {/* Pricing Header */}
           <div className="flex items-baseline gap-2 mb-4">
             <span className="text-[36px] font-bold text-gray-900 tracking-tight">
-              ₹ 1,800/-
+              ₹ {trainer.price}/-
             </span>
 
             <span className="text-gray-800 text-sm">
-              60-min lesson
+              Free 15 min lesson
             </span>
           </div>
 
