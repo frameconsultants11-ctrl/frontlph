@@ -13,6 +13,8 @@ import {
   IndianRupeeIcon
 } from 'lucide-react';
 import Link from 'next/link';
+import { calculateExperience } from '@/lib/data/calculateExp';
+import ProfileCompletionBanner from './ProfileCompletionBanner';
 
 const THEME = {
   heroBg: '#f1f8f3',
@@ -49,27 +51,7 @@ function sector(R, r, a1, a2) {
     Z
   `;
 }
-function calculateExperience(experience) {
-  if (!Array.isArray(experience) || experience.length === 0) {
-    return "0 years";
-  }
 
-  const currentYear = new Date().getFullYear();
-
-  const startYears = experience
-    .map((item) => Number(item.from))
-    .filter((year) => !isNaN(year));
-
-  if (startYears.length === 0) {
-    return "0 years";
-  }
-
-  const earliestYear = Math.min(...startYears);
-
-  const totalYears = currentYear - earliestYear;
-
-  return `${totalYears} years`;
-}
 function Ring() {
   const R = 272;
   const r = 135;
@@ -155,23 +137,22 @@ function Stat({ children, first }) {
   );
 }
 
-export default function MentorshipHero({trainer}) {
-  console.log(trainer)
+export default function MentorshipHero({session,trainer}) {
   return (
     <div
-      className="min-h-[95vh] bg-white font-sans"
+      className="min-h-[95vh] bg-white font-sans pt-24"
   
     >
 
       {/* =========================
           BREADCRUMB
       ========================== */}
-
+<ProfileCompletionBanner session={session} />
       <nav
         aria-label="Breadcrumb"
-        className="mt-20 px-5 sm:px-0 border-t border-gray-200  bg-white"
+        className=" px-5 sm:px-0 border-t border-gray-200  bg-white"
       >
-        <div className="mx-auto flex h-12 w-full max-w-[1400px] items-center text-[10px] sm:text-[12px] leading-5">
+        <div className="mx-auto flex h-10 w-full max-w-[1400px] items-center text-[10px] sm:text-[12px] leading-5">
 
           <Link
             href="/"
@@ -190,7 +171,7 @@ export default function MentorshipHero({trainer}) {
           />
 
 
-          <Link href="one-on-one-mentorship" className="hover:underline">
+          <Link href="/one-on-one-mentorship" className="hover:underline">
             1:1 Mentorship
           </Link>
 

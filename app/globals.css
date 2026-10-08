@@ -24,3 +24,72 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* =========================================================
+   MENTOR ABOUT SECTION
+========================================================= */
+
+/* Hide checkbox */
+.mentor-about-toggle {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------
+   CLOSED STATE
+   Show only 3 lines
+--------------------------------------------------------- */
+
+.mentor-about-content {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   OPEN STATE
+   Show complete content
+--------------------------------------------------------- */
+
+.mentor-about-toggle:checked ~ .mentor-about-content {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------
+   READ MORE
+--------------------------------------------------------- */
+
+.mentor-read-more {
+  display: flex;
+  align-items: center;
+}
+
+/* ---------------------------------------------------------
+   SHOW LESS
+--------------------------------------------------------- */
+
+.mentor-show-less {
+  display: none;
+}
+
+/* ---------------------------------------------------------
+   WHEN OPEN
+--------------------------------------------------------- */
+
+.mentor-about-toggle:checked
+  ~ .mentor-about-button
+  .mentor-read-more {
+  display: none;
+}
+
+.mentor-about-toggle:checked
+  ~ .mentor-about-button
+  .mentor-show-less {
+  display: flex;
+  align-items: center;
+}

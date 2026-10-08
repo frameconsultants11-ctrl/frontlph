@@ -1,5 +1,6 @@
 import Footer from "@/component/Footer";
 import Navbar from "@/component/NavBar";
+import CompareFloatingButton from "@/component/utils/CompareFloatingButton";
 import { auth } from "@/lib/auth";
 
 export default async function Layout({ children }) {
@@ -12,6 +13,7 @@ export default async function Layout({ children }) {
       {children}
 
       <Footer />
+      <CompareFloatingButton />
     </>
   );
 }

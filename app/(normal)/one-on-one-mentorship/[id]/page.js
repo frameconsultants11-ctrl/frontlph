@@ -2,11 +2,12 @@ import MentorBook from "@/component/MentorBook";
 import MentorProfileDetails from "@/component/MentorData";
 import MentorshipHero from "@/component/MentorshipHero";
 import MobileBookingBar from "@/component/MobileBookingBar";
+import { auth } from "@/lib/auth";
 import { getTrainerById } from "@/lib/data/trainers";
 
 export default async function Page({params}) {
    const { id } = await params;
-
+    const session = await auth()
   const trainer = await getTrainerById(id);
 
   if (!trainer) {
@@ -15,11 +16,12 @@ export default async function Page({params}) {
 
   return (
     <>
-      <MentorshipHero trainer={trainer} />
+      <MentorshipHero trainer={trainer} session={session}/>
 
       <div
         className="
           w-full
+          mt-8
           max-w-[1400px]
           mx-auto
           flex
@@ -49,11 +51,11 @@ export default async function Page({params}) {
             h-fit
           "
         >
-          <MentorBook trainer={trainer}  />
+          <MentorBook trainer={trainer} session={session} />
         </div>
       </div>
 
-      <MobileBookingBar  />
+      <MobileBookingBar trainer={trainer} session={session}  />
     </>
   );
 }

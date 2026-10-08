@@ -6,8 +6,11 @@ import {
   Heart,
   Upload,
 } from "lucide-react";
+import MentorShareButton from "./profile/MentorShareButton";
+import CompareButton from "./utils/CompareButton";
+import MessageTrainerButton from "./utils/MessageTrainerButton";
 
-export default function MobileBookingBar() {
+export default function MobileBookingBar({trainer, session}) {
   return (
     <div
       className="
@@ -19,6 +22,7 @@ export default function MobileBookingBar() {
         lg:hidden
         bg-white
         border-t
+        font-sans
         border-gray-200
         px-4
         pt-3
@@ -58,73 +62,10 @@ export default function MobileBookingBar() {
         {/* Secondary Actions */}
         <div className="grid grid-cols-3 gap-2 w-2/5">
           
-          {/* Message */}
-          <button
-            type="button"
-            aria-label="Message mentor"
-            className="
-              h-[44px]
-              w-full
-              flex
-              items-center
-              justify-center
-              border-[1.5px]
-              border-gray-200
-              rounded-full
-              bg-white
-              hover:bg-gray-50
-              hover:border-gray-300
-              transition-colors
-            "
-          >
-            <MessageSquare className="w-4 h-4 text-gray-700" />
-          </button>
-
-          {/* Heart */}
-          <button
-            type="button"
-            aria-label="Save mentor"
-            className="
-              h-[44px]
-              w-full
-              flex
-              items-center
-              justify-center
-              border-[1.5px]
-              border-gray-200
-              rounded-full
-              bg-white
-              hover:bg-gray-50
-              hover:border-gray-300
-              transition-colors
-            "
-          >
-            <Heart className="w-4 h-4 text-gray-700" />
-          </button>
-
-          {/* Share */}
-          <button
-            type="button"
-            aria-label="Share mentor"
-            className="
-              h-[44px]
-              w-full
-              flex
-              items-center
-              justify-center
-              border-[1.5px]
-              border-gray-200
-              rounded-full
-              bg-white
-              hover:bg-gray-50
-              hover:border-gray-300
-              transition-colors
-            "
-          >
-            <Upload className="w-4 h-4 text-gray-700" />
-          </button>
-
-        </div>
+                   <MessageTrainerButton trainer={trainer} session={session} />
+                   <CompareButton trainerId={trainer.id} />
+                    <MentorShareButton referralCode={session?.user?.referralCode} trainer={trainer.name} />
+     </div>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ export default async function Layout({ children }) {
 if (!session?.user) {
     redirect("/auth");
   }
-
+  console.log(session)
   return (
    <ClientLayout session={session}>
     {children}

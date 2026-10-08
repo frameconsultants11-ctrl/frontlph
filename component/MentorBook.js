@@ -1,14 +1,18 @@
+import { calculateExperience } from "@/lib/data/calculateExp";
 import {
   Briefcase,
   CheckSquare,
-  Heart,
-  MessageSquare,
   Star,
-  Upload,
   Zap,
 } from "lucide-react";
 
-export default function MentorBook({trainer}) {
+import MentorShareButton from "./profile/MentorShareButton";
+import CompareButton from "./utils/CompareButton";
+import MessageTrainerButton from "./utils/MessageTrainerButton";
+
+export default function MentorBook({ trainer, session }) {
+  const isFreeCallUsed = session?.user?.isFreeCallUsed === true;
+
   return (
     <aside className="w-full lg:w-[380px] shrink-0 sticky top-24 font-sans">
       <div className="relative overflow-hidden bg-white rounded-2xl border border-green-800/20 p-6">
@@ -42,24 +46,50 @@ export default function MentorBook({trainer}) {
         ====================================================== */}
         <div className="relative z-10">
 
-          {/* Pricing Header */}
-          <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-[36px] font-bold text-gray-900 tracking-tight">
-              ₹ {trainer.price}/-
-            </span>
+          {/* =====================================================
+              PRICING / FREE TRIAL HEADER
+          ====================================================== */}
+          {!isFreeCallUsed ? (
+            <>
+              <div className="mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[36px] font-bold text-gray-900 tracking-tight">
+                    FREE
+                  </span>
 
-            <span className="text-gray-800 text-sm">
-              Free 15 min lesson
-            </span>
-          </div>
+                  <span className="text-gray-800 text-sm">
+                    15 min trial lesson
+                  </span>
+                </div>
 
-          {/* Stats Row */}
+                <p className="text-sm text-gray-600 mt-1">
+                  Try a session with {trainer.name} before booking.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-baseline gap-2 mb-4">
+                <span className="text-[36px] font-bold text-gray-900 tracking-tight">
+                  ₹ {trainer.price}/-
+                </span>
+
+                <span className="text-gray-800 text-sm">
+                  per lesson
+                </span>
+              </div>
+            </>
+          )}
+
+          {/* =====================================================
+              STATS ROW
+          ====================================================== */}
           <div className="flex items-center gap-6 mb-6">
 
             {/* Rating */}
             <div>
               <div className="flex items-center gap-1 font-bold text-gray-800 text-lg">
-                <Star className="w-4 h-4  text-yellow-400" />
+                <Star className="w-4 h-4 text-yellow-400" />
                 4.9
               </div>
 
@@ -71,17 +101,19 @@ export default function MentorBook({trainer}) {
             {/* Experience */}
             <div>
               <div className="flex items-center gap-1 font-bold text-gray-800 text-lg">
-                <Briefcase className="w-4 h-4  text-gray-700" />
-                10+
+                <Briefcase className="w-4 h-4 text-gray-700" />
+                {calculateExperience(trainer.experience)}
               </div>
 
               <div className="text-sm text-gray-500 mt-0.5">
-                Years of Exp.
+                of Exp.
               </div>
             </div>
           </div>
 
-          {/* Primary Action Button */}
+          {/* =====================================================
+              PRIMARY ACTION
+          ====================================================== */}
           <button
             className="
               w-full
@@ -105,86 +137,72 @@ export default function MentorBook({trainer}) {
             "
           >
             <Zap className="w-4 h-4" />
-            Book trial lesson
+
+            {isFreeCallUsed
+              ? "Book lesson"
+              : "Book free trial"}
           </button>
 
-          {/* Secondary Actions */}
+          {/* =====================================================
+              SECONDARY ACTIONS
+          ====================================================== */}
           <div className="grid grid-cols-3 gap-3 mb-6">
 
-            {/* Message */}
-            <button
-              className="
-                flex
-                items-center
-                justify-center
-                py-3
-                border-[1.5px]
-                border-gray-200
-                rounded-full
-                hover:bg-gray-50
-                hover:border-gray-300
-                transition-colors
-              "
-            >
-              <MessageSquare className="w-5 h-5 text-gray-700" />
-            </button>
+            <MessageTrainerButton
+              trainer={trainer}
+              session={session}
+            />
 
-            {/* Heart */}
-            <button
-              className="
-                flex
-                items-center
-                justify-center
-                py-3
-                border-[1.5px]
-                border-gray-200
-                rounded-full
-                hover:bg-gray-50
-                hover:border-gray-300
-                transition-colors
-              "
-            >
-              <Heart className="w-5 h-5 text-gray-700" />
-            </button>
+            <CompareButton trainerId={trainer.id} />
 
-            {/* Share */}
-            <button
-              className="
-                flex
-                items-center
-                justify-center
-                py-3
-                border-[1.5px]
-                border-gray-200
-                rounded-full
-                hover:bg-gray-50
-                hover:border-gray-300
-                transition-colors
-              "
-            >
-              <Upload className="w-5 h-5 text-gray-700" />
-            </button>
+            <MentorShareButton
+              referralCode={session?.user?.referralCode}
+              trainer={trainer.name}
+            />
 
           </div>
 
-          {/* Alert Box */}
-          <div className="bg-[#e7fcf5] rounded-xl p-4 flex gap-3">
+          {/* =====================================================
+              FREE TRIAL / PAID MESSAGE
+          ====================================================== */}
+          {!isFreeCallUsed ? (
+            <div className="bg-[#e7fcf5] rounded-xl p-4 flex gap-3">
 
-            <div className="shrink-0 mt-0.5">
-              <CheckSquare className="w-5 h-5 text-black fill-black/10" />
+              <div className="shrink-0 mt-0.5">
+                <CheckSquare className="w-5 h-5 text-black fill-black/10" />
+              </div>
+
+              <div>
+                <p className="font-bold text-gray-900 text-sm mb-0.5">
+                  Your first lesson is free!
+                </p>
+
+                <p className="text-gray-700 text-sm">
+                  Get a free 15-minute trial session with this trainer.
+                </p>
+              </div>
+
             </div>
+          ) : (
+            <div className="bg-gray-50 rounded-xl p-4 flex gap-3 border border-gray-100">
 
-            <div>
-              <p className="font-bold text-gray-900 text-sm mb-0.5">
-                Not a match?
-              </p>
+              <div className="shrink-0 mt-0.5">
+                <CheckSquare className="w-5 h-5 text-black fill-black/10" />
+              </div>
 
-              <p className="text-gray-700 text-sm">
-                You still have 1 free tutor trials.
-              </p>
+              <div>
+                <p className="font-bold text-gray-900 text-sm mb-0.5">
+                  Free trial already used
+                </p>
+
+                <p className="text-gray-700 text-sm">
+                  Your free trial has been used. Book a lesson with this
+                  trainer to continue learning.
+                </p>
+              </div>
+
             </div>
-
-          </div>
+          )}
 
         </div>
       </div>

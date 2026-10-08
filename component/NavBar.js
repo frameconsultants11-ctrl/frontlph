@@ -309,12 +309,12 @@ const DesktopMegaMenu = ({ isOpen, onMouseEnter, onMouseLeave }) => {
                     </h2>
                   </div>
 
-                  <button
-                    type="button"
+                  <Link
+                    href={'/one-on-one-mentorship'}
                     className="text-xs font-medium text-slate-500 hover:text-green-700 transition-colors"
                   >
                     View All
-                  </button>
+                  </Link>
                 </div>
 
                 {/* ==================================================

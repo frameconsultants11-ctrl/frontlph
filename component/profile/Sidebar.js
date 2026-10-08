@@ -68,7 +68,7 @@ const SECONDARY_NAV = [
   },
   {
     label: "Messages",
-    href: "/dashboard/messages",
+    href: "/chat",
     icon: MessageSquare,
   },
 ];
