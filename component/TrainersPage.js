@@ -17,6 +17,7 @@ import {
   VerifiedIcon,
 } from "lucide-react";
 import Link from "next/link";
+import CompareButton from "./utils/CompareButton";
 
 const EXPERIENCE_OPTIONS = [
   {
@@ -74,7 +75,7 @@ function getExperienceText(years) {
   } experience`;
 }
 
-export default function TrainersPage() {
+export default function TrainersPage({session}) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -1322,144 +1323,46 @@ function FilterSidebar({
 
 function TrainerCard({ trainer }) {
   const skills = trainer.skillDocs || [];
-
   const visibleSkills = skills.slice(0, 1);
-
-  const remainingSkills = Math.max(
-    0,
-    skills.length - visibleSkills.length
-  );
-
+  const remainingSkills = Math.max(0, skills.length - visibleSkills.length);
   const designation = getDesignation(trainer);
 
   return (
-    <article
-      className="
-        group
-        relative
-        overflow-hidden
-        rounded-[26px]
-        border border-neutral-200
-        bg-white
-        shadow-[0_8px_30px_rgba(0,0,0,0.05)]
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:shadow-[0_20px_50px_rgba(0,0,0,0.10)]
-      "
-    >
-      {/* =====================================================
-          HEADER / GRADIENT AREA
-      ====================================================== */}
-
-      <div
-        className="
-          relative
-          h-[100px]
-          overflow-visible
-          bg-gradient-to-br
-          from-[#0a835a]
-          to-[#5bbf7d]
-        "
-      >
-        {/* =================================================
-            AVAILABLE STATUS
-        ================================================== */}
-
+    <article className="group relative overflow-hidden rounded-[20px] border border-neutral-200 bg-white shadow-[0_6px_20px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(0,0,0,0.10)]">
+      {/* HEADER (soft tint instead of solid green) */}
+      <div className="relative h-[60px] overflow-visible border-b border-emerald-100/60 bg-gradient-to-br from-emerald-50 via-emerald-50/60 to-white">
+        {/* Availability */}
         <div
-          className="
-            absolute
-            right-4
-            top-4
-            z-10
-            flex
-            items-center
-            gap-2
-            text-white
-            border
-            border-neutral-200
-            rounded-full
-            bg-white/20
-            px-3
-            py-1
-            shadow-sm
-            backdrop-blur-sm
-          "
+          className={`absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${
+            trainer.isAvailable
+              ? "border-emerald-200 bg-white text-emerald-700"
+              : "border-neutral-200 bg-white text-neutral-500"
+          }`}
         >
-          <span
-            className={`
-              h-2
-              w-2
-              rounded-full
-              ${
-                trainer.isAvailable
-                  ? "bg-emerald-50"
-                  : "bg-neutral-400"
-              }
-            `}
-          />
-
-          <span
-            className="
-              text-[11px]
-              font-medium
-              text-neutral-50
-            "
-          >
-            {trainer.isAvailable
-              ? "Available now"
-              : "Unavailable"}
+          <span className="relative flex h-1.5 w-1.5">
+            {trainer.isAvailable && (
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+            )}
+            <span
+              className={`relative inline-flex h-1.5 w-1.5 rounded-full ${
+                trainer.isAvailable ? "bg-emerald-500" : "bg-neutral-400"
+              }`}
+            />
           </span>
+          {trainer.isAvailable ? "Available now" : "Unavailable"}
         </div>
 
-        {/* =================================================
-            PROFILE IMAGE
-            50% HEADER / 50% BODY
-        ================================================== */}
-
-        <div
-          className="
-            absolute
-            bottom-[-43px]
-            left-6
-            z-20
-          "
-        >
-          <div
-            className="
-              h-[88px]
-              w-[88px]
-              overflow-hidden
-              rounded-full
-              border-[5px]
-              border-white
-              bg-neutral-100
-              shadow-[0_8px_20px_rgba(0,0,0,0.18)]
-            "
-          >
+        {/* Avatar */}
+        <div className="absolute bottom-[-32px] left-4 z-20">
+          <div className="h-[64px] w-[64px] overflow-hidden rounded-full border-4 border-white bg-neutral-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)]">
             {trainer.image ? (
               <img
                 src={trainer.image}
                 alt={trainer.name}
-                className="
-                  h-full
-                  w-full
-                  object-cover
-                "
+                className="h-full w-full object-cover"
               />
             ) : (
-              <div
-                className="
-                  flex
-                  h-full
-                  w-full
-                  items-center
-                  justify-center
-                  bg-emerald-100
-                  text-xl
-                  font-semibold
-                  text-emerald-700
-                "
-              >
+              <div className="flex h-full w-full items-center justify-center bg-emerald-100 text-base font-semibold text-emerald-700">
                 {getInitials(trainer.name)}
               </div>
             )}
@@ -1467,233 +1370,87 @@ function TrainerCard({ trainer }) {
         </div>
       </div>
 
-      {/* =====================================================
-          CARD BODY
-      ====================================================== */}
-
-      <div
-        className="
-          px-5
-          pb-5
-          pt-[52px]
-        "
-      >
-        {/* =================================================
-            NAME + BOOKMARK
-        ================================================== */}
-
-        <div className="flex items-start justify-between gap-3">
+      {/* BODY */}
+      <div className="px-4 pb-4 pt-[38px]">
+        {/* Name + Compare */}
+        <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <div className="flex items-center gap-1">
-            <h3
-              className="
-                truncate
-                text-[18px]
-                font-semibold
-                tracking-[-0.02em]
-                text-neutral-900
-              "
-            >
-              {trainer.name}
-            </h3>
-            <VerifiedIcon size={16} className="text-emerald-600" />
-</div>
-            <p
-              className="
-                truncate
-                text-[13px]
-                text-neutral-500
-              "
-            >
+              <h3 className="truncate text-[16px] font-semibold tracking-[-0.02em] text-neutral-900">
+                {trainer.name}
+              </h3>
+              <VerifiedIcon size={14} className="shrink-0 text-emerald-600" />
+            </div>
+            <p className="truncate text-[12px] text-neutral-500">
               {designation}
             </p>
           </div>
 
-          <button
-            type="button"
-            className="
-              flex
-              h-11
-              w-11
-              shrink-0
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-neutral-200
-              bg-white
-              text-neutral-600
-              transition
-              hover:bg-neutral-50
-              hover:text-neutral-900
-            "
-          >
-            <Bookmark
-              size={18}
-              strokeWidth={1.6}
-            />
-          </button>
+          <CompareButton trainerId={trainer._id} isListing={true} />
         </div>
 
-        {/* =================================================
-            SKILLS
-        ================================================== */}
-
-        <div
-          className="
-            mt-5
-            flex
-            min-h-[34px]
-            items-center
-            gap-2
-            overflow-hidden
-          "
-        >
+        {/* Skills */}
+        <div className="mt-3 flex min-h-[28px] items-center gap-1.5 overflow-hidden">
           {visibleSkills.map((skill) => (
             <span
               key={skill._id}
-              className="
-                inline-flex
-                max-w-[170px]
-                items-center
-                gap-2
-                rounded-full
-                bg-[#f5f5f5]
-                px-3
-                py-1.5
-                text-xs
-                font-medium
-                text-neutral-700
-              "
+              className="inline-flex max-w-[160px] items-center gap-1.5 rounded-full bg-[#f5f5f5] px-2.5 py-1 text-[11px] font-medium text-neutral-700"
             >
-              <span
-                className="
-                  flex
-                  h-5
-                  w-5
-                  shrink-0
-                  items-center
-                  justify-center
-                  overflow-hidden
-                  rounded-full
-                  bg-emerald-600
-                  text-[9px]
-                  text-white
-                "
-              >
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-600 text-[8px] text-white">
                 {skill.image ? (
                   <img
                     src={skill.image}
                     alt=""
-                    className="
-                      h-full
-                      w-full
-                      object-cover
-                    "
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   skill.name?.[0]
                 )}
               </span>
-
-              <span className="truncate">
-                {skill.name}
-              </span>
+              <span className="truncate">{skill.name}</span>
             </span>
           ))}
 
           {remainingSkills > 0 && (
-            <span
-              className="
-                rounded-full
-                bg-[#f5f5f5]
-                px-3
-                py-1.5
-                text-xs
-                font-medium
-                text-neutral-600
-              "
-            >
+            <span className="rounded-full bg-[#f5f5f5] px-2.5 py-1 text-[11px] font-medium text-neutral-600">
               +{remainingSkills}
             </span>
           )}
         </div>
 
-        {/* =================================================
-            STATS
-        ================================================== */}
-
-        <div
-          className="
-            mt-5
-            grid
-            grid-cols-3
-            divide-x
-            divide-neutral-200
-            border-y
-            border-neutral-100
-            py-4
-          "
-        >
-          <div className="px-2 text-center">
-            <p className="text-[17px] font-semibold text-neutral-900">
+        {/* Stats */}
+        <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-200 border-y border-neutral-100 py-2.5">
+          <div className="px-1.5 text-center">
+            <p className="text-[15px] font-semibold text-neutral-900">
               {trainer.experienceYears || 0}+
             </p>
-
-            <p className="mt-1 text-[11px] text-neutral-500">
-              experience
-            </p>
+            <p className="mt-0.5 text-[10px] text-neutral-500">experience</p>
           </div>
 
-          <div className="px-2 text-center">
-            <p className="text-[17px] font-semibold text-neutral-900">
+          <div className="px-1.5 text-center">
+            <p className="text-[15px] font-semibold text-neutral-900">
               {trainer.certificationDocs?.length || 0}
             </p>
-
-            <p className="mt-1 text-[11px] text-neutral-500">
+            <p className="mt-0.5 text-[10px] text-neutral-500">
               certifications
             </p>
           </div>
 
-          <div className="px-2 text-center">
-            <p className="text-[17px] font-semibold text-neutral-900">
-              {formatCurrency(
-                trainer.hourlyRate
-              )}
+          <div className="px-1.5 text-center">
+            <p className="text-[15px] font-semibold text-neutral-900">
+              {formatCurrency(trainer.hourlyRate)}
             </p>
-
-            <p className="mt-1 text-[11px] text-neutral-500">
-              per hour
-            </p>
+            <p className="mt-0.5 text-[10px] text-neutral-500">per hour</p>
           </div>
         </div>
 
-        {/* =================================================
-            CTA
-        ================================================== */}
-
-       <Link
-  href={`/one-on-one-mentorship/${trainer._id}`}
-  className="
-    mt-5
-    flex
-    h-12
-    w-full
-    items-center
-    justify-center
-    rounded-full
-    bg-[#111111]
-    text-sm
-    font-medium
-    text-white
-    transition-all
-    duration-200
-    hover:bg-[#23835c]
-    active:scale-[0.98]
-  "
->
-  Know More
-</Link>
+        {/* CTA */}
+        <Link
+          href={`/one-on-one-mentorship/${trainer._id}`}
+          className="mt-3 flex h-10 w-full items-center justify-center rounded-full bg-[#111111] text-[13px] font-medium text-white transition-all duration-200 hover:bg-[#23835c] active:scale-[0.98]"
+        >
+          Know More
+        </Link>
       </div>
     </article>
   );

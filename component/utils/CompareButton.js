@@ -9,7 +9,7 @@ import {
   removeCompareId,
 } from "@/lib/compare";
 
-export default function CompareButton({ trainerId }) {
+export default function CompareButton({ trainerId, isListing=false }) {
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
@@ -50,30 +50,31 @@ export default function CompareButton({ trainerId }) {
 
   return (
     <button
-      type="button"
-      onClick={handleClick}
-      title={added ? "Remove from compare" : "Add to compare"}
-      className={`
-        flex
-        items-center
-        justify-center
-        py-3
-        border-[1.5px]
-        rounded-full
-        transition-colors
-        cursor-pointer
-        ${
-          added
-            ? "border-green-500 bg-green-50 hover:bg-green-100"
-            : "border-gray-200 hover:bg-gray-50 hover:border-gray-300"
-        }
-      `}
-    >
-      {added ? (
-        <Check className="w-5 h-5 text-green-600" />
-      ) : (
-        <ArrowLeftRight className="w-5 h-5 text-gray-700" />
-      )}
-    </button>
+  type="button"
+  onClick={handleClick}
+  title={added ? "Remove from compare" : "Add to compare"}
+  className={`
+    flex
+    items-center
+    justify-center
+    border-[1.5px]
+    transition-colors
+    cursor-pointer
+
+    ${isListing ? "w-10 h-10 rounded-full" : "py-3 px-4 rounded-full"}
+
+    ${
+      added
+        ? "border-green-500 bg-green-50 hover:bg-green-100"
+        : "border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+    }
+  `}
+>
+  {added ? (
+    <Check className="w-5 h-5 text-green-600" />
+  ) : (
+    <ArrowLeftRight className="w-5 h-5 text-gray-600" />
+  )}
+</button>
   );
 }
