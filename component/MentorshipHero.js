@@ -140,7 +140,7 @@ function Stat({ children, first }) {
 export default function MentorshipHero({session,trainer}) {
   return (
     <div
-      className="min-h-[95vh] bg-white font-sans pt-24"
+      className="min-h-[95vh] bg-white font-sans pt-0"
   
     >
 

@@ -1,341 +1,128 @@
-"use client";
+import Image from "next/image";
+import Link from "next/link";
 
-const NAV_LINKS = [
-  "Learnings",
-  "Certification Prep.",
-  "Interview Prep.",
-  "Career Counseling",
-  "Projects",
-];
-
-const COMPANY_LINKS = [
-  "About Us",
-  "Careers",
-  "Our Mentors",
-  "Success Stories",
-  "Contact Us",
-];
-
-const RESOURCE_LINKS = [
-  "Blog",
-  "Free Resources",
-  "Roadmap",
-  "FAQs",
-  "Support",
-];
-
-const LEGAL_LINKS = [
-  "Privacy Policy",
-  "Terms of Use",
-  "Refund Policy",
-  "Cookie Policy",
-  "Security",
+/* ---------------------------------------------------------
+   Content (same links as before). Change the hrefs to your
+   real routes.
+--------------------------------------------------------- */
+const COLUMNS = [
+  {
+    title: "Platform",
+    links: [
+      { label: "Learnings", href: "/courses" },
+      { label: "Certification Prep.", href: "/certification-prep" },
+      { label: "Interview Prep.", href: "/interview-prep" },
+      { label: "Career Counseling", href: "/career-counseling" },
+      { label: "Projects", href: "/projects" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About Us", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Our Mentors", href: "/mentors" },
+      { label: "Success Stories", href: "/success-stories" },
+      { label: "Contact Us", href: "/contact" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Blog", href: "/blog" },
+      { label: "Free Resources", href: "/free-resources" },
+      { label: "Roadmap", href: "/roadmap" },
+      { label: "FAQs", href: "/faqs" },
+      { label: "Support", href: "/support" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Use", href: "/terms" },
+      { label: "Refund Policy", href: "/refund-policy" },
+      { label: "Cookie Policy", href: "/cookie-policy" },
+      { label: "Security", href: "/security" },
+    ],
+  },
 ];
 
 export default function Footer() {
   return (
-    <footer className="relative w-full overflow-hidden bg-[#fffefa] text-[#242235] font-sans mt-12">
+    <footer className="relative mt-0 w-full overflow-hidden bg-[#0039bd] font-sans text-white">
+      {/* soft light from the top-left, keeps the blue from feeling flat */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-40 -top-40 h-[480px] w-[480px] rounded-full bg-[#0039bd] opacity-60 blur-[120px]"
+      />
 
-      {/* =====================================================
-          MAIN FOOTER
-      ====================================================== */}
+      <div className="relative z-10 mx-auto max-w-[1400px] px-6 sm:px-10 lg:px-10">
+        {/* ================= TOP ================= */}
+        <div className="grid grid-cols-1 gap-12 pb-14 pt-16 md:grid-cols-2 lg:grid-cols-[1.7fr_1fr_1fr_1fr_1fr] lg:gap-10 lg:pb-16 lg:pt-20">
+          {/* Brand */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <Link href="/" aria-label="LearnPerHour home" className="inline-flex items-center gap-2.5">
+                <Image src='/1.png' alt='logo' height={50} width={180} className="-ml-3" />
+            </Link>
 
-      <div className="relative z-10 mx-auto max-w-[1510px] px-6 sm:px-10 lg:px-0">
-
-        {/* TOP CONTENT */}
-        <div
-          className="
-            grid
-            grid-cols-1
-            gap-12
-            pt-[70px]
-            pb-[90px]
-
-            md:grid-cols-2
-
-            lg:grid-cols-[1.8fr_1fr_1fr_1fr_1fr]
-            lg:gap-16
-            lg:pt-[105px]
-            lg:pb-[95px]
-          "
-        >
-
-          {/* =================================================
-              BRAND
-          ================================================== */}
-
-          <div>
-            {/* Logo */}
-            <div className="mb-5 flex items-center">
-              <div
-                className="
-                  mr-2
-                  flex
-                  h-[31px]
-                  w-[31px]
-                  items-center
-                  justify-center
-                  rounded-full
-                  border-[2px]
-                  border-[#29263b]
-                  text-[18px]
-                  font-bold
-                "
-              >
-                L
-              </div>
-
-              <span
-                className="
-                  text-[30px]
-                  font-medium
-                  leading-none
-                  tracking-[-1.7px]
-                "
-              >
-                LearnPerHour
-              </span>
-            </div>
-
-            {/* Description */}
-            <p
-              className="
-                max-w-[290px]
-                text-[18px]
-                leading-[1.55]
-                tracking-[-0.3px]
-                text-[#6d687b]
-              "
-            >
-              Developed for those who
-              <br />
-              believe in building the future.
+            <p className="mt-5 max-w-xs text-base leading-relaxed text-blue-100/80">
+              Developed for those who believe in building the future.
             </p>
 
-            {/* Optional app / CTA */}
-            <button
-              type="button"
-              className="
-                mt-7
-                rounded-full
-                border
-                border-[#e6e2e7]
-                bg-white
-                px-5
-                py-2.5
-                text-[14px]
-                font-medium
-                text-[#302c40]
-                shadow-[0_1px_2px_rgba(0,0,0,0.03)]
-                transition-all
-                hover:border-[#d7d2db]
-                hover:bg-[#fafafa]
-              "
+            <Link
+              href="/courses"
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#ccfc3b] px-5 py-2.5 text-sm font-semibold text-[#00206b] transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              LearnPerHour
-            </button>
+              Browse courses
+            </Link>
           </div>
 
-          {/* =================================================
-              PLATFORM
-          ================================================== */}
-
-          <FooterColumn
-            title="Platform"
-            links={NAV_LINKS}
-          />
-
-          {/* =================================================
-              COMPANY
-          ================================================== */}
-
-          <FooterColumn
-            title="Company"
-            links={COMPANY_LINKS}
-          />
-
-          {/* =================================================
-              RESOURCES
-          ================================================== */}
-
-          <FooterColumn
-            title="Resources"
-            links={RESOURCE_LINKS}
-          />
-
-          {/* =================================================
-              LEGAL
-          ================================================== */}
-
-          <FooterColumn
-            title="Legal"
-            links={LEGAL_LINKS}
-          />
-
+          {/* Link columns */}
+          {COLUMNS.map((column) => (
+            <nav key={column.title} aria-label={column.title}>
+              <h3 className="text-sm font-semibold text-[#ccfc3b]">{column.title}</h3>
+              <ul className="mt-5 space-y-3">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-[15px] text-blue-100/80 transition-colors hover:text-white focus-visible:text-white focus-visible:underline"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
-
-        {/* =====================================================
-            DIVIDER
-        ====================================================== */}
-
-        <div className="h-px w-full bg-[#e5e1dc]" />
-
-
-        {/* =====================================================
-            COPYRIGHT
-        ====================================================== */}
-
-        <div
-          className="
-            flex
-            flex-col
-            gap-4
-            py-8
-
-            text-[15px]
-            text-[#6d687b]
-
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-
-            lg:py-[42px]
-          "
-        >
-          <p>
-            © 2026 LearnPerHour. All rights reserved.
-          </p>
-
-          <div className="flex flex-wrap gap-x-2">
-            <a
-              href="#"
-              className="underline underline-offset-2 transition-colors hover:text-[#242235]"
-            >
+        {/* ================= COPYRIGHT ================= */}
+        <div className="flex flex-col gap-3 border-t border-white/15 py-7 text-sm text-blue-100/70 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 LearnPerHour. All rights reserved.</p>
+          <p className="flex flex-wrap gap-x-1.5">
+            <Link href="/terms" className="underline underline-offset-2 transition-colors hover:text-white">
               Terms of Service
-            </a>
-
+            </Link>
             <span>and</span>
-
-            <a
-              href="#"
-              className="underline underline-offset-2 transition-colors hover:text-[#242235]"
-            >
+            <Link href="/privacy-policy" className="underline underline-offset-2 transition-colors hover:text-white">
               Privacy Policy
-            </a>
-          </div>
+            </Link>
+          </p>
         </div>
-
       </div>
 
-
-      {/* =====================================================
-          BOTTOM GRADIENT
-      ====================================================== */}
-
-      <div
-        className="
-          relative
-          h-[350px]
-          overflow-hidden
-
-          bg-[linear-gradient(
-            to_bottom,
-            #fffefa_0%,
-            #fff7f8_13%,
-            #fce6f8_32%,
-            #efd5fa_53%,
-            #c8a8fa_75%,
-            #a887ed_100%
-          )]
-        "
-      >
-
-        {/* Soft pink glow */}
-        <div
-          className="
-            pointer-events-none
-            absolute
-            left-1/2
-            top-0
-            h-[300px]
-            w-[900px]
-            -translate-x-1/2
-            rounded-full
-            bg-green-200/40
-            blur-[100px]
-          "
-        />
-
-        {/* Large watermark */}
-        <div
-          className="
-            absolute
-            bottom-[-45px]
-            left-1/2
-            -translate-x-1/2
-            whitespace-nowrap
-
-            text-[190px]
-            font-medium
-            leading-none
-            tracking-[-10px]
-
-            text-green-800/30
-
-            sm:text-[260px]
-            lg:text-[290px]
-          "
+      {/* ================= WATERMARK ================= */}
+      <div aria-hidden="true" className="relative h-[16vw] min-h-[90px] select-none overflow-hidden">
+        <span
+          className="absolute inset-x-0 -bottom-[2.2vw] block whitespace-nowrap text-center text-[15vw] font-bold leading-none tracking-tighter text-transparent"
+          style={{ WebkitTextStroke: "1.5px rgba(204, 252, 59, 0.35)" }}
         >
           LearnPerHour
-        </div>
-
+        </span>
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#00206b] to-transparent" />
       </div>
-
     </footer>
-  );
-}
-
-
-/* =========================================================
-   FOOTER COLUMN
-========================================================= */
-
-function FooterColumn({ title, links }) {
-  return (
-    <div>
-      <h3
-        className="
-          mb-5
-          text-[17px]
-          font-semibold
-          leading-none
-          tracking-[-0.3px]
-          text-[#29263b]
-        "
-      >
-        {title}
-      </h3>
-
-      <ul className="space-y-[13px]">
-        {links.map((link) => (
-          <li key={link}>
-            <a
-              href="#"
-              className="
-                text-[15px]
-                leading-[1.35]
-                tracking-[-0.2px]
-                text-[#323133]
-                transition-colors
-                hover:text-[#29263b]
-              "
-            >
-              {link}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

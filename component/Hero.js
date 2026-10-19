@@ -1,363 +1,166 @@
-import React from "react";
-import { Search, IndianRupee, MonitorPlay } from "lucide-react";
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Search, IndianRupee, MonitorPlay, Quote } from 'lucide-react';
+import CourseSearchForm from './utils/CourseSearchForm';
+
+/* ============================================================
+   Brand: blue #0039bd | deep blue #002f9e | lime #ccfc3b | ink #060B1F
+   Replace MENTOR_IMG with a transparent PNG cut-out of a mentor
+   for the exact "person standing on the gradient" look.
+============================================================ */
+
+const MENTOR_IMG =
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85';
+
+const REVIEWS = [
+  {
+    side: 'left',
+    initials: 'PS',
+    quote: 'Cleared my Kubernetes certification in three weeks with a 1:1 mentor.',
+    name: 'Priya Sharma',
+    role: 'DevOps Engineer',
+  },
+  {
+    side: 'right',
+    initials: 'AM',
+    quote: 'Mock interviews gave me the confidence to crack my backend round.',
+    name: 'Aman Mehta',
+    role: 'Backend Developer',
+  },
+];
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
+
+const ReviewCard = ({ review, index }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay: 0.5 + index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+    className={`absolute z-20 w-[170px] rounded-xl bg-lime-300 p-3 shadow-[0_18px_40px_-14px_rgba(0,20,90,0.45)] sm:w-[220px] sm:p-3.5 ${
+      review.side === 'left'
+        ? 'bottom-[48%] left-0 sm:-left-16 lg:-left-16'
+        : 'bottom-[40%] right-0 sm:-right-16 lg:-right-16'
+    }`}
+  >
+    <div className="flex items-start gap-2.5">
+      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#0039bd] text-[10px] font-semibold text-white">
+        {review.initials}
+      </span>
+      <p className="text-[11px] leading-snug text-slate-900 sm:text-[12px]">{review.quote}</p>
+    </div>
+    <div className="mt-3 flex items-center justify-between border-t border-slate-600 pt-2.5">
+      <div className="min-w-0">
+        <p className="truncate text-[11px] font-semibold text-slate-900">{review.name}</p>
+        <p className="truncate text-[10px] text-slate-800">{review.role}</p>
+      </div>
+      <Quote size={14} className="shrink-0 text-[#0039bd]/80" />
+    </div>
+  </motion.div>
+);
 
 const Hero = () => {
-  const mentors = [
-    {
-      id: 1,
-      bg: "bg-[#f2eadd]",
-      offset: "translate-y-12 opacity-60",
-      img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 2,
-      bg: "bg-[#f4f1d6]",
-      offset: "translate-y-4",
-      img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 3,
-      bg: "bg-[#dbeafe]",
-      offset: "translate-y-0",
-      img: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 4,
-      bg: "bg-[#dcfce7]",
-      offset: "translate-y-0",
-      img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 5,
-      bg: "bg-[#ffedd5]",
-      offset: "translate-y-4",
-      img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: 6,
-      bg: "bg-[#f3f4f6]",
-      offset: "translate-y-12 opacity-60",
-      img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    },
-  ];
-
   return (
-    <div
-      className="
-        min-h-screen
-        w-full
-        flex
-        flex-col
-        overflow-x-hidden
-        font-sans
-        relative
-      "
-      style={{
-        backgroundColor: "#fafcfa",
-        backgroundImage: `
-          radial-gradient(
-            circle at 20% 0%,
-            rgba(163, 230, 181, 0.6) 0%,
-            transparent 40%
-          ),
-          radial-gradient(
-            circle at 80% 0%,
-            rgba(163, 230, 181, 0.6) 0%,
-            transparent 40%
-          ),
-          radial-gradient(
-            circle at 50% 30%,
-            #ffffff 0%,
-            transparent 60%
-          )
-        `,
-      }}
-    >
-      {/* ================= MAIN CONTENT ================= */}
-      <main
-        className="
-          flex-1
-          flex
-          flex-col
-          items-center
-          pt-24
-          md:pt-32
-          px-4
-          relative
-          z-10
-          w-full
-          max-w-7xl
-          mx-auto
-        "
+    <section className="relative flex h-[120vh] w-full flex-col items-center overflow-hidden mt-15 bg-gradient-to-b from-[#0039bd] via-[#4d74cf] to-[#ffff] font-sans">
+     
+
+{/* Subtle noise texture */}
+<svg
+  className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12] [mask-image:radial-gradient(ellipse_at_50%_55%,black_20%,transparent_75%)]"
+  aria-hidden="true"
+>
+  <defs>
+    <filter id="hero-noise">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.85"
+        numOctaves="20"
+        stitchTiles="stitch"
+      />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+  </defs>
+
+  <rect
+    width="100%"
+    height="100%"
+    filter="url(#hero-noise)"
+  />
+</svg>
+
+
+      {/* ================= TEXT + SEARCH ================= */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="relative z-10 flex w-full max-w-7xl flex-col items-center px-4 pt-18 md:pt-24"
       >
-        {/* Badge */}
-        <div
-          className="
-            flex
-            items-center
-            gap-2
-            bg-white/20
-            backdrop-blur-md
-            border
-            border-white
-            shadow-sm
-            rounded-full
-            px-4
-            py-1.5
-            mb-8
-          "
+        <motion.div
+          variants={item}
+          className="mb-7 flex items-center gap-2 rounded-lg border border-white/25 bg-white/10 px-4 py-1.5 backdrop-blur-md"
         >
-          <MonitorPlay className="w-4 h-4 text-green-600" />
+          <MonitorPlay className="h-4 w-4 text-[#ccfc3b]" />
+          <span className="text-xs font-medium text-white">Your #1 platform for 1:1 training</span>
+        </motion.div>
 
-          <span className="text-xs font-semibold text-green-700 tracking-wide">
-            Your #1 Platform for 1:1 Training
-          </span>
-        </div>
-
-        {/* Heading */}
-        <h1
-          className="
-            text-4xl
-            md:text-5xl
-            lg:text-[56px]
-            font-bold
-            text-[#14532d]
-            text-center
-            max-w-4xl
-            leading-[1.15]
-            tracking-tight
-            mb-6
-          "
+        <motion.h1
+          variants={item}
+          className="max-w-7xl text-center text-xl font-semibold leading-[1.1] tracking-tight text-white md:text-5xl lg:text-[48px]"
         >
-          1:1 Learning, Interview Prep &
-          <br className="hidden md:block" />
-          Project Support
-        </h1>
+          1 on 1 Learning, Interview Prep, Career Counselling <br/>&amp; Project Support
+        </motion.h1>
 
-        {/* Description */}
-        <p
-          className="
-            text-gray-500
-            text-base
-            md:text-lg
-            text-center
-            max-w-3xl
-            mb-12
-            px-4
-            leading-relaxed
-          "
+        <motion.p
+          variants={item}
+          className="mt-5 max-w-3xl px-2 text-center text-base leading-relaxed text-white/85 md:text-lg"
         >
-          From mastering individual topics to preparing for interviews,
-          completing courses,
-          <br className="hidden md:block" />
-          and building real-world projects.
-        </p>
+          From mastering individual topics to preparing for interviews, completing courses and
+          building real-world projects.
+        </motion.p>
 
-        {/* ================= SEARCH BOX ================= */}
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            sm:rounded-full
-            shadow-[0_8px_30px_rgb(0,0,0,0.08)]
-            p-2
-            w-full
-            max-w-3xl
-            flex
-            flex-col
-            md:flex-row
-            items-center
-            gap-2
-            border
-            border-gray-100
-            transition-all
-            focus-within:shadow-[0_8px_30px_rgb(0,0,0,0.12)]
-            hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]
-          "
-        >
-          {/* Subject Input */}
-          <div
-            className="
-              flex
-              flex-1
-              items-center
-              px-4
-              py-2
-              w-full
-              min-w-0
-            "
-          >
-            <Search className="w-5 h-5 text-gray-400 mr-3 shrink-0" />
+        {/* search pill */}
+       <CourseSearchForm/>
+      </motion.div>
 
-            <input
-              type="text"
-              placeholder="e.g. Openshift"
-              className="
-                w-full
-                min-w-0
-                text-gray-700
-                placeholder-gray-400
-                bg-transparent
-                text-lg
-                outline-none
-                focus:ring-0
-              "
-            />
-          </div>
+      {/* ================= MENTOR + FLOATING CARDS ================= */}
+      <div className="relative mt-12  flex-1 md:mt-2">
+       <motion.div
+  initial={{ opacity: 0, y: 40 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{
+    duration: 0.8,
+    delay: 0.25,
+    ease: [0.22, 1, 0.36, 1],
+  }}
+  className="relative mx-auto h-[660px] w-full overflow-hidden"
+>
+  <img
+    src="/team.png"
+    alt="Mentor smiling"
+    className="h-full w-full object-cover object-top"
+    loading="eager"
+  />
 
-          {/* Divider */}
-          <div className="hidden md:block w-px h-8 bg-gray-200 shrink-0" />
 
-          {/* Price Input */}
-          <div
-            className="
-              flex
-              flex-1
-              items-center
-              px-4
-              py-2
-              w-full
-              min-w-0
-              border-t
-              md:border-t-0
-              border-gray-100
-            "
-          >
-            <div
-              className="
-                flex
-                items-center
-                justify-center
-                text-gray-400
-                rounded-full
-                w-7
-                h-7
-                mr-3
-                shrink-0
-              "
-            >
-              <IndianRupee className="w-4 h-4" />
-            </div>
+  {/* Bottom fade */}
+  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#dbe6ff] to-transparent" />
+</motion.div>
 
-            <input
-              type="text"
-              placeholder="1800/- Hr."
-              className="
-                w-full
-                min-w-0
-                text-gray-700
-                placeholder-gray-400
-                bg-transparent
-                text-lg
-                outline-none
-                focus:ring-0
-              "
-            />
-          </div>
-
-          {/* Search Button */}
-          <button
-            className="
-              w-full
-              md:w-auto
-              bg-[#e8f5e9]
-              hover:bg-[#c8e6c9]
-              text-[#14532d]
-              border
-              border-[#a3d9a5]
-              transition-all
-              duration-200
-              rounded-full
-              px-8
-              py-2.5
-              flex
-              items-center
-              justify-center
-              gap-2
-              font-medium
-              whitespace-nowrap
-              mt-2
-              md:mt-0
-              shadow-sm
-              hover:shadow-md
-              hover:-translate-y-0.5
-              shrink-0
-            "
-          >
-            <Search className="w-4 h-4" />
-            Search
-          </button>
-        </div>
-      </main>
-
-      {/* ================= MENTOR SECTION ================= */}
-      <div
-        className="
-          w-full
-          mt-16
-          md:mt-24
-          pb-0
-          overflow-hidden
-        "
-      >
-        <div
-          className="
-            w-full
-            flex
-            items-end
-            justify-center
-            gap-4
-            md:gap-6
-            px-4
-            pt-8
-            pb-0
-            overflow-hidden
-          "
-        >
-          {mentors.map((mentor) => (
-            <div
-              key={mentor.id}
-              className={`
-                w-[calc((100vw-48px)/3)]
-                max-w-[260px]
-                min-w-[100px]
-                md:w-[260px]
-                h-[260px]
-                md:h-[340px]
-                flex-shrink
-                ${mentor.bg}
-                rounded-[32px]
-                overflow-hidden
-                relative
-                shadow-sm
-                transition-transform
-                duration-500
-                hover:-translate-y-2
-                ${mentor.offset}
-              `}
-            >
-              <img
-                src={mentor.img}
-                alt={`Mentor profile ${mentor.id}`}
-                className="
-                  absolute
-                  bottom-0
-                  left-0
-                  w-full
-                  h-full
-                  object-cover
-                  mix-blend-multiply
-                  filter
-                  contrast-125
-                  object-top
-                "
-                loading="lazy"
-              />
-            </div>
-          ))}
-        </div>
+        {REVIEWS.map((r, i) => (
+          <ReviewCard key={r.name} review={r} index={i} />
+        ))}
       </div>
-    </div>
+    </section>
   );
 };
 

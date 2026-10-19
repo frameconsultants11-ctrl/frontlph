@@ -1,529 +1,379 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowUpRight,
-  Menu,
-  X,
-  ChevronDown,
-  BookOpen,
-  UserCheck,
-  LayoutTemplate,
-} from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import Link from 'next/link';
-import { MentorshipTrainers } from './MentorshipTrainers';
+import Image from 'next/image';
+import { ArrowUpRight, Menu, X, ChevronDown, BookOpen, Wrench, LayoutTemplate, ShieldCheck } from 'lucide-react';
 
+/* ============================================================
+   NAV LINKS  (menu: which mega menu opens on hover)
+============================================================ */
 const NAV_LINKS = [
-  'Learnings',
-  'Certification Prep.',
-  'Interview Prep.',
-  'Career Counseling',
-  'Projects',
+  { label: 'Learnings', href: '/courses', menu: 'learn' },
+  { label: 'Certification Prep.', href: '/certifications', menu: 'cert' },
+  { label: 'Interview Prep.', href: '#' },
+  { label: 'Career Counseling', href: '#' },
+  { label: 'Projects', href: '#' },
 ];
 
-
-const LEARNING_TABS = [
-  {
-    id: 'trainers',
-    label: '1 on 1 Mentorship',
-    icon: UserCheck,
-
-  },
-
-  {
-    id: 'courses',
-    label: 'Courses',
-    icon: BookOpen,
-
-  },
-
-  {
-    id: 'topic',
-    label: 'Topic Learning',
-    icon: LayoutTemplate,
-
-    courses: [
-      {
-        id: 'topic-1',
-        title: 'Docker & Kubernetes',
-        price: '₹999',
-        image:
-          'https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=800&q=85',
-      },
-      {
-        id: 'topic-2',
-        title: 'LangGraph',
-        price: '₹1,499',
-        image:
-          'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=85',
-      },
-      {
-        id: 'topic-3',
-        title: 'Next.js Advanced',
-        price: '₹1,299',
-        image:
-          'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=85',
-      },
+const MENUS = {
+  learn: {
+    width: 'w-[min(1200px,100%)]',
+    footer: 'Explore everything we teach',
+    columns: [
+      { type: 'courses', title: 'Courses', sub: 'courses', Icon: BookOpen },
+      { type: 'tools', title: 'Tools', sub: 'tools', Icon: Wrench },
+      { type: 'topics', title: 'Topics', sub: 'topics', Icon: LayoutTemplate },
     ],
   },
-];
+  cert: {
+    width: 'w-[min(460px,100%)]',
+    footer: 'Get certified',
+    columns: [{ type: 'certifications', title: 'Certifications', sub: 'certifications', Icon: ShieldCheck }],
+  },
+};
 
+/* ============================================================
+   DATA  (fetched once, shared by desktop + mobile)
+============================================================ */
+let menuPromise = null;
+const loadMenu = () => {
+  if (!menuPromise) {
+    menuPromise = fetch('/api/menu')
+      .then((r) => r.json())
+      .then((r) => {
+        if (!r.success) throw new Error(r.message || 'Menu failed');
+        return r.data;
+      })
+      .catch((err) => {
+        menuPromise = null; // allow retry
+        throw err;
+      });
+  }
+  return menuPromise;
+};
 
-const CourseCard = ({ course, index }) => {
+function useMenuData() {
+  const [state, setState] = useState({ data: null, loading: true, error: false });
+  const load = useCallback(() => {
+    setState((s) => ({ ...s, loading: true, error: false }));
+    loadMenu()
+      .then((data) => setState({ data, loading: false, error: false }))
+      .catch(() => setState({ data: null, loading: false, error: true }));
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  return { ...state, retry: load };
+}
+
+/* ============================================================
+   SMALL PIECES  (dark theme)
+============================================================ */
+const Logo = () => (
+  <Link href="/" className="flex items-center gap-2.5" aria-label="Learn Per Hour home">
+    <Image src="/1.png" alt="logo" height={40} width={150} />
+  </Link>
+);
+
+const itemMeta = (item) =>
+  item.hours > 0 ? `${item.hours} Hours` : `₹${Number(item.actualPrice).toLocaleString('en-IN')}`;
+
+/* item: image tile, bold title + level badge, two-line description */
+const MenuItem = ({ item, onNavigate }) => (
+  <Link
+    href={item.href}
+    onClick={onNavigate}
+    className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-white/[0.06]"
+  >
+    {item.image ? (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={item.image} alt="" className="h-9 w-9 shrink-0 rounded-lg bg-white/10 object-contain p-1.5" />
+    ) : (
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/10 text-sm font-bold text-[#ccfc3b]">
+        {item.name?.[0]?.toUpperCase()}
+      </span>
+    )}
+    <span className="min-w-0 flex-1">
+      <span className="flex items-center gap-2">
+        <span className="truncate text-sm font-semibold text-white transition-colors group-hover:text-[#ccfc3b]">
+          {item.name}
+        </span>
+        {item.level && (
+          <span className="shrink-0 rounded-full bg-white/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white/70">
+            {item.level}
+          </span>
+        )}
+      </span>
+      <span className="mt-0.5 block text-xs truncate line-clamp-1 leading-relaxed text-white/50">
+        {item.description || itemMeta(item)}
+      </span>
+    </span>
+  </Link>
+);
+
+const Skeleton = ({ rows = 5 }) => (
+  <div className="space-y-2">
+    {Array.from({ length: rows }).map((_, i) => (
+      <div key={i} className="flex items-start gap-3 p-2.5">
+        <div className="h-9 w-9 animate-pulse rounded-lg bg-white/10" />
+        <div className="flex-1 space-y-2">
+          <div className="h-3 w-2/3 animate-pulse rounded bg-white/10" />
+          <div className="h-2.5 w-full animate-pulse rounded bg-white/5" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+/* items + category chips for one section (desktop + mobile) */
+const MenuList = ({ section, loading, error, onRetry, onNavigate }) => {
+  if (loading) return <Skeleton />;
+  if (error) {
+    return (
+      <p className="px-2 py-4 text-sm text-white/60">
+        Couldn’t load this menu.{' '}
+        <button type="button" onClick={onRetry} className="font-semibold text-[#ccfc3b] hover:underline">Retry</button>
+      </p>
+    );
+  }
+  if (!section?.items?.length) return <p className="px-2 py-4 text-sm text-white/40">Nothing here yet.</p>;
+
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 18,
-        scale: 0.96,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        scale: 1,
-      }}
-      transition={{
-        duration: 0.35,
-        delay: index * 0.07,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileHover={{
-        y: -5,
-      }}
-      className="group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-shadow duration-300"
-    >
-      {/* ======================================================
-          IMAGE
-      ====================================================== */}
-
-      <div className="relative h-[125px] overflow-hidden">
-        <img
-          src={course.image}
-          alt={course.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-
-        {/* Image gradient */}
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-
-        {/* Small floating badge */}
-
-        <div className="absolute top-3 left-3">
-          <span className="px-2.5 py-1 rounded-full bg-white/30 backdrop-blur-sm text-[10px] font-semibold text-slate-700">
-            Learn
-          </span>
-        </div>
+    <>
+      <div className="space-y-0.5">
+        {section.items.map((item) => <MenuItem key={item.id} item={item} onNavigate={onNavigate} />)}
       </div>
 
-      {/* ======================================================
-          CARD CONTENT
-      ====================================================== */}
-
-      <div className="p-3.5">
-        <h3 className="text-[14px] font-semibold text-slate-900 leading-tight truncate">
-          {course.title}
-        </h3>
-
-        <div className="flex items-center justify-between gap-2 mt-3">
-          <span className="text-sm font-bold text-green-700 whitespace-nowrap">
-            {course.price}
-          </span>
-
-          <button
-            type="button"
-            className="group/button flex items-center justify-center gap-1.5
-             bg-slate-900 hover:bg-green-700 text-white
-             px-3 py-2 rounded-full text-[11px] font-semibold
-             transition-all duration-200
-             shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(0,0,0,0.35)]"
-          >
-            Book Now
-
-            <ArrowUpRight
-              size={13}
-              strokeWidth={2.5}
-              className="transition-transform duration-200
-                       group-hover/button:-translate-y-0.5
-                       group-hover/button:translate-x-0.5"
-            />
-          </button>
+      {section.categories?.length > 0 && (
+        <div className="mt-4 px-2.5">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-white/40">Browse by category</p>
+          <div className="flex flex-wrap gap-1.5">
+            {section.categories.map((c) => (
+              <Link
+                key={c.id}
+                href={c.href}
+                onClick={onNavigate}
+                className="rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 text-xs font-medium text-white/90 transition-colors hover:border-[#ccfc3b] hover:bg-[#ccfc3b] hover:text-black"
+              >
+                {c.name} <span className="ml-0.5 text-white/40">{c.count}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
-    </motion.div>
+      )}
+    </>
   );
 };
 
+/* lime "view all" pill */
+const ViewAllPill = ({ href, label, onNavigate }) => (
+  <Link
+    href={href}
+    onClick={onNavigate}
+    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#ccfc3b] px-4 py-2 text-xs font-semibold text-[#060B1F] transition-colors hover:bg-white"
+  >
+    {label}
+    <ArrowUpRight size={13} strokeWidth={2.5} />
+  </Link>
+);
 
-const DesktopMegaMenu = ({ isOpen, onMouseEnter, onMouseLeave }) => {
-  const [activeTabId, setActiveTabId] = useState(LEARNING_TABS[0].id);
-
-  const activeTab =
-    LEARNING_TABS.find((tab) => tab.id === activeTabId) || LEARNING_TABS[0];
+/* ============================================================
+   DESKTOP MEGA MENU  (dark blue)
+============================================================ */
+const DesktopMegaMenu = ({ menu, menuData, onMouseEnter, onMouseLeave, onNavigate }) => {
+  const def = menu ? MENUS[menu] : null;
+  const { data, loading, error, retry } = menuData;
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 12,
-            scale: 0.97,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-          }}
-          exit={{
-            opacity: 0,
-            y: 8,
-            scale: 0.98,
-          }}
-          transition={{
-            duration: 0.22,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="fixed left-1/2 -translate-x-1/2 top-[58px] w-[min(850px,calc(100vw-40px))] bg-white/95 backdrop-blur-2xl border border-white/70 rounded-[26px] shadow-[0_25px_70px_rgba(0,0,0,0.14)] overflow-hidden text-slate-800"
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-        >
-          {/* ==================================================
-              HOVER BRIDGE
-          ================================================== */}
-
-          <div className="absolute -top-8 left-0 right-0 h-8 bg-transparent" />
-
-          {/* ==================================================
-              DECORATIVE BACKGROUND
-          ================================================== */}
-
-          <div className="pointer-events-none absolute -top-32 -right-32 w-[350px] h-[350px] bg-green-100/50 rounded-full blur-3xl" />
-
-          <div className="pointer-events-none absolute -bottom-40 -left-40 w-[350px] h-[350px] bg-green-50 rounded-full blur-3xl" />
-
-          {/* ==================================================
-              MAIN CONTENT
-          ================================================== */}
-
-          <div className="relative p-5 md:p-6">
-            {/* ==================================================
-                TABS
-            ================================================== */}
-
-            <div className="flex  mb-5 pb-2 border-gray-200">
-              <div className="inline-flex items-center gap-1.5  p-1.5">
-                {LEARNING_TABS.map((tab) => {
-                  const Icon = tab.icon;
-                  const isActive = activeTabId === tab.id;
-
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setActiveTabId(tab.id)}
-                      className="relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium"
-                    >
-                      {/* ==================================================
-                          ANIMATED ACTIVE BACKGROUND
-                      ================================================== */}
-                      {isActive && (
-                        <motion.div
-                          layoutId="learning-active-tab"
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2
-                                       w-full h-12
-                                       bg-gradient-to-t
-                                       from-green-700/35
-                                       to-transparent
-                                       blur-[1px]
-                                       pointer-events-none"
-                          transition={{
-                            type: 'spring',
-                            stiffness: 420,
-                            damping: 30,
-                            mass: 0.8,
-                          }}
-                        />
-                      )}
-
-                      {/* ==================================================
-                          TAB CONTENT
-                      ================================================== */}
-
-                      <span className="relative z-10 flex items-center gap-2">
-                        <Icon
-                          size={16}
-                          strokeWidth={2}
-                          className={
-                            isActive ? 'text-green-700' : 'text-slate-400'
-                          }
-                        />
-
-                        <span
-                          className={
-                            isActive ? 'text-green-700' : 'text-slate-600'
-                          }
-                        >
-                          {tab.label}
+      {def && (
+        <div className="pointer-events-none absolute inset-x-0 top-full hidden justify-center px-6 pt-2 lg:flex">
+          <motion.div
+            key={menu}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            className={`pointer-events-auto overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0039bd] via-[#2547c2] to-[#050B24] ${def.width}`}
+          >
+            <div
+              className="grid gap-x-10 gap-y-6 px-7 pb-5 pt-6"
+              style={{ gridTemplateColumns: `repeat(${def.columns.length}, minmax(0, 1fr))` }}
+            >
+              {def.columns.map((col) => {
+                const section = data?.[col.type];
+                return (
+                  <section key={col.type} className="min-w-0">
+                    {/* muted title + thin line + view all */}
+                    <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+                      <h2 className="flex items-center gap-2.5 text-lg font-medium text-white/90">
+                        <span className="grid h-7 w-7 place-items-center rounded-lg bg-[#0039bd] text-white">
+                          <col.Icon size={15} />
                         </span>
-                      </span>
-                    </button>
+                        {col.title}
+                      </h2>
+                      <Link
+                        href={section?.viewAll || '/'}
+                        onClick={onNavigate}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#ccfc3b] transition-colors hover:text-white"
+                      >
+                        View all <ArrowUpRight size={13} strokeWidth={2.5} />
+                      </Link>
+                    </div>
+
+                    <div className="mt-3">
+                      <MenuList section={section} loading={loading} error={error} onRetry={retry} onNavigate={onNavigate} />
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+
+            {/* footer strip with all "view all" options */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 bg-black/25 px-7 py-3.5">
+              <p className="text-sm text-white/80">{def.footer}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                {def.columns.map((col) => {
+                  const section = data?.[col.type];
+                  return (
+                    <ViewAllPill
+                      key={col.type}
+                      href={section?.viewAll || '/'}
+                      label={`All ${col.title}${section?.total ? ` (${section.total})` : ''}`}
+                      onNavigate={onNavigate}
+                    />
                   );
                 })}
               </div>
             </div>
-
-            {/* ==================================================
-                ACTIVE TAB
-            ================================================== */}
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab.id}
-                initial={{
-                  opacity: 0,
-                  y: 8,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  y: -8,
-                }}
-                transition={{
-                  duration: 0.22,
-                  ease: 'easeOut',
-                }}
-              >
-                {/* ==================================================
-                    SECTION HEADER
-                ================================================== */}
-
-                <div className="flex items-end justify-between mb-4 px-1">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900 mt-1">
-                      Explore Learning
-                    </h2>
-                  </div>
-
-                  <Link
-                    href={'/one-on-one-mentorship'}
-                    className="text-xs font-medium text-slate-500 hover:text-green-700 transition-colors"
-                  >
-                    View All
-                  </Link>
-                </div>
-
-                {/* ==================================================
-                    THREE COURSE CARDS
-                ================================================== */}
-
-                {/* ==================================================
-    THREE COURSE CARDS
-================================================== */}
-
-<div className="">
-  <MentorshipTrainers
-    tabId={activeTab.id}
-    tabName={activeTab.label}
-  />
-</div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );
 };
 
+/* ============================================================
+   MOBILE MENU  (dark)
+============================================================ */
+const Accordion = ({ open, children }) => (
+  <AnimatePresence initial={false}>
+    {open && (
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: 'auto', opacity: 1 }}
+        exit={{ height: 0, opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="overflow-hidden"
+      >
+        {children}
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
 
-const MobileMenu = ({ isOpen, onClose }) => {
-  const [expandedNav, setExpandedNav] = useState(null);
-  const [expandedTab, setExpandedTab] = useState(null);
+const MobileSection = ({ col, menuData, expanded, onToggle, onNavigate }) => {
+  const { data, loading, error, retry } = menuData;
+  const section = data?.[col.type];
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`flex w-full items-center justify-between rounded-xl px-2 py-2.5 text-sm font-semibold text-white ${
+          expanded ? 'bg-white/10' : ''
+        }`}
+      >
+        <span className="flex items-center gap-3">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#0039bd] text-white"><col.Icon size={16} /></span>
+          {col.title}
+        </span>
+        <ChevronDown size={16} className={`mr-1 text-white/50 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+      </button>
+      <Accordion open={expanded}>
+        <div className="mt-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+          <MenuList section={section} loading={loading} error={error} onRetry={retry} onNavigate={onNavigate} />
+          <div className="mt-4 px-2.5">
+            <ViewAllPill href={section?.viewAll || '/'} label={`View all ${col.title}`} onNavigate={onNavigate} />
+          </div>
+        </div>
+      </Accordion>
+    </div>
+  );
+};
 
-  const handleNavClick = (link) => {
-    if (link === 'Learnings') {
-      setExpandedNav(expandedNav === 'Learnings' ? null : 'Learnings');
-    } else {
-      onClose();
-    }
-  };
+const MobileMenu = ({ isOpen, onClose, session, menuData }) => {
+  const [openLink, setOpenLink] = useState(null);
+  const [openSection, setOpenSection] = useState(null);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className="fixed inset-0 z-40 bg-[#4F9E80] overflow-y-auto pt-24 pb-12 px-6 lg:hidden font-sans"
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+          className="fixed inset-0 z-40 overflow-y-auto bg-gradient-to-b from-[#071A5E] to-[#050B24] px-5 pb-10 pt-[88px] lg:hidden"
         >
-          <div className="flex flex-col gap-6 max-w-lg mx-auto text-white">
-            {/* ==================================================
-                NAV ITEMS
-            ================================================== */}
-
-            {NAV_LINKS.map((link) => (
-              <div key={link} className="border-b border-white/10 pb-4">
-                <button
-                  type="button"
-                  onClick={() => handleNavClick(link)}
-                  className="w-full flex items-center justify-between text-md font-semibold tracking-tight"
-                >
-                  {link}
-
-                  {link === 'Learnings' && (
-                    <ChevronDown
-                      size={24}
-                      className={`transition-transform duration-300 ${
-                        expandedNav === 'Learnings' ? 'rotate-180' : ''
-                      }`}
-                    />
-                  )}
-                </button>
-
-                {/* ==================================================
-                    MOBILE LEARNING SUBMENU
-                ================================================== */}
-
-                <AnimatePresence>
-                  {link === 'Learnings' && expandedNav === 'Learnings' && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
+          <div className="mx-auto max-w-lg">
+            {NAV_LINKS.map((link) => {
+              const def = link.menu ? MENUS[link.menu] : null;
+              const expanded = openLink === link.label;
+              return (
+                <div key={link.label} className="border-b border-white/10">
+                  {def ? (
+                    <button
+                      type="button"
+                      onClick={() => setOpenLink(expanded ? null : link.label)}
+                      className="flex w-full items-center justify-between py-4 text-[15px] font-medium text-white"
                     >
-                      <div className="pt-5 flex flex-col gap-2">
-                        {LEARNING_TABS.map((tab) => {
-                          const Icon = tab.icon;
-                          const isExpanded = expandedTab === tab.id;
-
-                          return (
-                            <div
-                              key={tab.id}
-                              className="l overflow-hidden"
-                            >
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setExpandedTab(
-                                    isExpanded ? null : tab.id
-                                  )
-                                }
-                                className={`w-full p-4 flex items-center justify-between text-left transition-colors`}
-                              >
-                                <div className="flex items-center gap-3">
-                                  <Icon
-                                    size={18}
-                                    className="text-green-100"
-                                  />
-                                  <span className="font-medium">
-                                    {tab.label}
-                                  </span>
-                                </div>
-                                <ChevronDown
-                                  size={18}
-                                  className={`transition-transform duration-300 ${
-                                    isExpanded ? 'rotate-180' : ''
-                                  }`}
-                                />
-                              </button>
-
-                              {/* MOBILE COURSES */}
-                              <AnimatePresence>
-                                {isExpanded && (
-                                  <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="overflow-hidden"
-                                  >
-                                    <div className="p-3 pt-0 grid gap-3">
-                                      {tab.courses.map((course, index) => (
-                                        <motion.div
-                                          key={course.id}
-                                          initial={{ opacity: 0, y: 10 }}
-                                          animate={{ opacity: 1, y: 0 }}
-                                          transition={{
-                                            delay: index * 0.06,
-                                          }}
-                                          className="bg-white rounded-xl overflow-hidden text-slate-900"
-                                        >
-                                          <img
-                                            src={course.image}
-                                            alt={course.title}
-                                            className="w-full h-32 object-cover"
-                                          />
-                                          <div className="p-3">
-                                            <h3 className="font-semibold text-sm">
-                                              {course.title}
-                                            </h3>
-                                            <div className="flex items-center justify-between mt-3">
-                                              <span className="text-green-700 font-bold text-sm">
-                                                {course.price}
-                                              </span>
-                                              <button
-                                                type="button"
-                                                className="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-2 rounded-lg text-xs font-medium"
-                                              >
-                                                Book Now
-                                                <ArrowUpRight size={13} />
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </motion.div>
-                                      ))}
-                                    </div>
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
+                      {link.label}
+                      <ChevronDown size={18} className={`text-white/50 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+                    </button>
+                  ) : (
+                    <a href={link.href} onClick={onClose} className="block py-4 text-[15px] font-medium text-white">
+                      {link.label}
+                    </a>
                   )}
-                </AnimatePresence>
-              </div>
-            ))}
-            
-            <div className="bg-white h-24 rounded-lg overflow-hidden">
-              <img
-                src="/off.png"
-                alt="Refer Someone and Earn 500 Credits"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* ==================================================
-                MOBILE AUTH BUTTONS
-            ================================================== */}
 
-            <div className="mt-2 flex flex-col gap-4">
-              <Link
-                href="/auth"
-                className="w-full py-2.5 text-white font-medium text-sm border border-white/20 rounded-full hover:bg-white/10 transition-colors"
-              >
-                Login
-              </Link>
+                  {def && (
+                    <Accordion open={expanded}>
+                      <div className="flex flex-col gap-1 pb-4">
+                        {def.columns.map((col) => (
+                          <MobileSection
+                            key={col.type}
+                            col={col}
+                            menuData={menuData}
+                            expanded={openSection === col.type}
+                            onToggle={() => setOpenSection(openSection === col.type ? null : col.type)}
+                            onNavigate={onClose}
+                          />
+                        ))}
+                      </div>
+                    </Accordion>
+                  )}
+                </div>
+              );
+            })}
 
-              <button
-                type="button"
-                className="w-full py-2.5 bg-white text-green-900 font-medium text-sm rounded-full flex items-center justify-center gap-2 shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(0,0,0,0.35)]"
-              >
-                Register Now
-                <span className="bg-green-900 text-white rounded-full p-1">
-                  <ArrowUpRight size={14} />
-                </span>
-              </button>
+            <div className="mt-8 flex flex-col gap-3">
+              {!session ? (
+                <>
+                  <Link href="/auth" onClick={onClose} className="rounded-full border border-white/20 py-3 text-center text-sm font-medium text-white">
+                    Login
+                  </Link>
+                  <Link href="/auth" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#ccfc3b] py-3 text-sm font-semibold text-[#060B1F]">
+                    Register now <ArrowUpRight size={16} />
+                  </Link>
+                </>
+              ) : (
+                <Link href="/dashboard" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#ccfc3b] py-3 text-sm font-semibold text-[#060B1F]">
+                  {session.user.name} <ArrowUpRight size={16} />
+                </Link>
+              )}
             </div>
           </div>
         </motion.div>
@@ -532,180 +382,149 @@ const MobileMenu = ({ isOpen, onClose }) => {
   );
 };
 
-
-export default function Navbar({session}) {
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  
+/* ============================================================
+   NAVBAR
+============================================================ */
+export default function Navbar({ session }) {
+  const [activeMenu, setActiveMenu] = useState(null); // 'learn' | 'cert' | null
+  const [hovered, setHovered] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const timeoutRef = useRef(null);
+  const menuData = useMenuData();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // run once on mount
-
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
-
-  const handleMouseEnter = (menu) => {
-    if (timeoutRef.current) {
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && setActiveMenu(null);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
       clearTimeout(timeoutRef.current);
-    }
+    };
+  }, []);
 
-    if (menu === 'Learnings') {
-      setActiveDropdown(menu);
-    }
+  const openMenu = (link) => {
+    clearTimeout(timeoutRef.current);
+    setHovered(link.label);
+    setActiveMenu(link.menu || null);
   };
 
-  const handleMouseLeave = () => {
+  const closeMenu = () => {
+    clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      setActiveDropdown(null);
+      setActiveMenu(null);
+      setHovered(null);
     }, 180);
   };
 
+  const closeNow = () => {
+    clearTimeout(timeoutRef.current);
+    setActiveMenu(null);
+    setHovered(null);
+  };
 
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMobileMenuOpen]);
-
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
+  const keepOpen = () => clearTimeout(timeoutRef.current);
 
   return (
-    <>
-      <nav 
-        className={`fixed top-0 w-full z-50 px-4 md:px-8 py-6 font-sans transition-colors duration-300 ${
-          isScrolled ? 'bg-white shadow-sm' : 'bg-white lg:bg-transparent'
+    <MotionConfig reducedMotion="user">
+      <nav
+        className={`fixed top-0 z-50 w-full border-b bg-[#0039bd] font-sans transition-all duration-300 ${
+          scrolled ? 'border-white/10 py-3' : 'border-transparent py-1.5'
         }`}
       >
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-      
-          <div className="flex-shrink-0 z-50">
-            <a
-              href="#"
-              className="text-green-800 text-xl md:text-2xl font-bold tracking-tight flex items-center gap-1"
-            >
-              <span className="font-extrabold">LHP.</span>
-              <span className="font-light opacity-90">Learn Per Hour</span>
-            </a>
-          </div>
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-0 md:px-8">
+          <div className="shrink-0"><Logo /></div>
 
-      
-
-          <div className="hidden lg:flex items-center absolute left-1/2 -translate-x-1/2">
-            <div 
-              className={`flex items-center gap-2 backdrop-blur-md rounded-full px-2 py-1.5 shadow-sm transition-colors duration-300 ${
-                isScrolled ? 'bg-slate-100/60 border border-slate-200' : 'bg-white/10 border border-white'
-              }`}
-            >
-              {NAV_LINKS.map((link) => (
-                <div
-                  key={link}
-                  className="relative"
-                  onMouseEnter={() => handleMouseEnter(link)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                
-
-                  <a
-                    href="#"
-                    className={`px-5 py-2 rounded-full text-black/90 text-sm font-medium transition-all duration-300 block ${
-                      activeDropdown === link
-                        ? 'bg-white text-green-800'
-                        : 'hover:text-green-800 hover:bg-white'
+          {/* desktop links */}
+          <div className="absolute left-1/2 hidden -translate-x-1/2 lg:block" onMouseLeave={closeMenu}>
+            <div className="flex items-center gap-1">
+              {NAV_LINKS.map((link) => {
+                const active = hovered === link.label;
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={closeNow}
+                    onMouseEnter={() => openMenu(link)}
+                    onFocus={() => openMenu(link)}
+                    className={`relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                      active ? 'text-white' : 'text-white/70'
                     }`}
                   >
-                    {link}
-                  </a>
-
-               
-
-                  {link === 'Learnings' && (
-                    <DesktopMegaMenu
-                      isOpen={activeDropdown === 'Learnings'}
-                      onMouseEnter={() => handleMouseEnter('Learnings')}
-                      onMouseLeave={handleMouseLeave}
-                    />
-                  )}
-                </div>
-              ))}
+                    {active && (
+                      <motion.span
+                        layoutId="nav-hover-pill"
+                        className="absolute inset-0 rounded-full border border-white/30 bg-white/10"
+                        transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                      />
+                    )}
+                    <span className="relative">{link.label}</span>
+                    {link.menu && (
+                      <ChevronDown
+                        size={14}
+                        className={`relative transition-transform duration-200 ${activeMenu === link.menu ? 'rotate-180' : ''}`}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
-
-          <div className="hidden lg:flex items-center gap-6 z-50">
-           {!session && <a
-              href="/auth"
-              className={`text-sm font-medium transition-colors ${
-                isScrolled ? 'text-green-800 hover:text-green-600' : 'text-green-800 hover:text-green-700'
-              }`}
-            >
-              Login
-            </a>}
-
-          {!session &&  <button
-              type="button"
-              className="flex items-center bg-green-800 gap-3 pl-5 pr-2 py-2 rounded-full border border-green-800/30 text-green-50 text-sm font-medium transition-all group backdrop-blur-sm shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(0,0,0,0.35)]"
-            >
-              Register Now
-
-              <span className="bg-white text-green-800 rounded-full p-1.5 group-hover:scale-105 transition-transform">
-                <ArrowUpRight size={16} strokeWidth={2.5} />
-              </span>
-            </button> }
-          {session &&  <Link
-              href={'/dashboard'}
-              className="flex items-center bg-green-800 gap-3 pl-5 pr-2 py-2 rounded-full border border-green-800/30 text-green-50 text-sm font-medium transition-all group backdrop-blur-sm shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(0,0,0,0.35)]"
-            >
-              {session.user.name}
-
-              <span className="bg-white text-green-800 rounded-full p-1.5 group-hover:scale-105 transition-transform">
-                <ArrowUpRight size={16} strokeWidth={2.5} />
-              </span>
-            </Link>}
+          {/* desktop auth */}
+          <div className="hidden items-center gap-5 lg:flex">
+            {!session ? (
+              <>
+                <a href="/auth" className="text-sm font-medium text-white/80 transition-colors hover:text-white">Login</a>
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-full bg-[#ccfc3b] px-5 py-2 text-sm font-semibold text-[#060B1F] transition-colors hover:bg-[#c4f035]"
+                >
+                  Register now <ArrowUpRight size={15} strokeWidth={2.5} />
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 rounded-full bg-[#ccfc3b] px-5 py-2 text-sm font-semibold text-[#060B1F] transition-colors hover:bg-[#c4f035]"
+              >
+                {session.user.name} <ArrowUpRight size={15} strokeWidth={2.5} />
+              </Link>
+            )}
           </div>
 
-       
-
+          {/* mobile toggle */}
           <button
             type="button"
-            className="lg:hidden text-green-800 z-50 p-2 bg-white/10 backdrop-blur-sm rounded-full border border-green-800/20"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMobileOpen((v) => !v)}
+            className="rounded-full border border-white/15 p-2 text-white lg:hidden"
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
+
+        <DesktopMegaMenu
+          menu={activeMenu}
+          menuData={menuData}
+          onMouseEnter={keepOpen}
+          onMouseLeave={closeMenu}
+          onNavigate={closeNow}
+        />
       </nav>
 
-      {/* ======================================================
-          MOBILE MENU
-      ====================================================== */}
-
-      <MobileMenu
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-      />
-    </>
+      <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} session={session} menuData={menuData} />
+    </MotionConfig>
   );
 }

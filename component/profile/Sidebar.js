@@ -22,32 +22,14 @@ import {
   ShoppingBag,
   MonitorPlay,
 } from "lucide-react";
+import Image from "next/image";
 
 /* =========================================================
    NAVIGATION
 ========================================================= */
 
 const MAIN_NAV = [
-  {
-    label: "Dashboard",
-    href: "/profile/dashboard",
-    icon: LayoutGrid,
-  },
-  {
-    label: "Sessions",
-    href: "/profile/sessions",
-    icon: MonitorPlay,
-  },
-  {
-    label: "Circles",
-    href: "/profile/circles",
-    icon: Circle,
-  },
-  {
-    label: "Trophies",
-    href: "/profile/trophies",
-    icon: Trophy,
-  },
+
   {
     label: "Orders",
     href: "/profile/orders",
@@ -98,68 +80,7 @@ function Logo({ expanded }) {
       href="/dashboard"
       className="flex h-[58px] items-center px-3"
     >
-      <div
-        className="
-          flex
-          h-9
-          w-9
-          shrink-0
-          items-center
-          justify-center
-          rounded-xl
-          bg-[#111827]
-          text-white
-          shadow-sm
-        "
-      >
-        <div className="relative h-4 w-4">
-          <span
-            className="
-              absolute
-              left-0
-              top-0
-              h-2.5
-              w-2.5
-              rounded-[3px]
-              bg-white
-            "
-          />
-
-          <span
-            className="
-              absolute
-              bottom-0
-              right-0
-              h-2.5
-              w-2.5
-              rounded-[3px]
-              bg-green-400
-            "
-          />
-        </div>
-      </div>
-
-      <div
-        className={`
-          ml-3
-          overflow-hidden
-          transition-all
-          duration-300
-          ${
-            expanded
-              ? "w-[120px] opacity-100"
-              : "w-0 opacity-0"
-          }
-        `}
-      >
-        <p className="whitespace-nowrap text-[15px] font-bold tracking-[-0.3px] text-gray-900">
-          Learn Per Hour
-        </p>
-
-        <p className="mt-0.5 whitespace-nowrap text-[10px] font-medium text-gray-400">
-          Learning platform
-        </p>
-      </div>
+    <Image src="/2.png" alt="logo" height={40} width={150} />
     </Link>
   );
 }
@@ -258,7 +179,7 @@ function Profile({ session, expanded }) {
 
   return (
     <Link
-      href="/dashboard/profile"
+      href="/profile"
       className="
         mx-2
         mb-2
@@ -337,7 +258,7 @@ function LogoutButton({ expanded }) {
       type="button"
       onClick={() =>
         signOut({
-          callbackUrl: "/login",
+          callbackUrl: "/auth",
         })
       }
       className="

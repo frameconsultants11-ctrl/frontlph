@@ -7,6 +7,7 @@ import AuthButton from "@/component/AuthButton";
 import SignupForm from "@/component/SignUp";
 import LoginForm from "@/component/LoginForm";
 import GoogleIcon from "@/component/GoogleIcon";
+import Image from "next/image";
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
@@ -18,10 +19,11 @@ export default function LoginPage() {
       : "login";
 
   const isLogin = mode === "login";
+const callbackUrl = searchParams.get("callbackUrl");
 
   const handleGoogleLogin = async () => {
     await signIn("google", {
-      callbackUrl: "/dashboard",
+     callbackUrl: callbackUrl || "/dashboard",
     });
   };
 
@@ -122,8 +124,8 @@ export default function LoginPage() {
 
             {/* Heading */}
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#173f32]">
-                <div className="h-4 w-4 rounded-full bg-[#b9d63b]" />
+              <div className="flex justify-center">
+              <Image src="/2.png" alt="logo" height={40} width={150} />
               </div>
 
               <h2 className="text-[25px] font-semibold tracking-[-0.6px] text-[#17251f]">
@@ -164,11 +166,11 @@ export default function LoginPage() {
             </div>
 
             {/* Form */}
-            {isLogin ? (
+            {/* {isLogin ? (
               <LoginForm />
             ) : (
               <SignupForm />
-            )}
+            )} */}
 
             {/* Toggle */}
             <div className="mt-7 text-center">
