@@ -4,6 +4,9 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+html {
+  scroll-behavior: smooth;
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -92,4 +95,60 @@ body {
   .mentor-show-less {
   display: flex;
   align-items: center;
+}
+
+.dual-range-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 8px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+.dual-range-input::-webkit-slider-runnable-track {
+  height: 8px;
+  background: transparent;
+}
+
+.dual-range-input::-moz-range-track {
+  height: 8px;
+  background: transparent;
+}
+
+.dual-range-input::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -5px;
+  border: 3px solid #0039bd;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 15%);
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.dual-range-input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 3px solid #0039bd;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 15%);
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.dual-range-input:focus-visible {
+  outline: none;
+}
+
+.dual-range-input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgb(0 57 189 / 15%);
 }

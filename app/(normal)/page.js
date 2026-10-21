@@ -1,5 +1,6 @@
 import CareerOutcomes from "@/component/CareerOutcomes";
 import CertificationShowcase from "@/component/CertificationShowcase";
+import FaqChat from "@/component/FAQChat";
 import GlobalReach from "@/component/GlobalReach";
 import Hero from "@/component/Hero";
 import LearnPerHourFeatures from "@/component/LearnPerHourFeatures";
@@ -15,7 +16,6 @@ export default function Home() {
   return (
     <>
     <Hero/>
-    <RunningLine/>
     <CourseExplorer />
     <WhyChooseUs/>
  <LearnShowcase
@@ -30,6 +30,7 @@ export default function Home() {
 <CareerOutcomes/>
 <Testimonials/>
 <GlobalReach/>
+<FaqChat/>
     </>
   );
 }

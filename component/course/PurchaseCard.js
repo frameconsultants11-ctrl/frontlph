@@ -22,7 +22,7 @@ export default async function PurchaseCard({
         <img
           src={course.image}
           alt={course.name}
-          className="aspect-video h-28 w-full object-cover"
+          className="aspect-video h-36 w-full object-cover"
         />
       )}
 
@@ -94,6 +94,31 @@ export default async function PurchaseCard({
               ))}
             </ul>
           </div>
+        )}
+      </div>
+      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-4 border-t border-slate-200 bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] lg:hidden">
+        <div>
+          <p className="text-xl font-bold text-[#060B1F]">{money(course.actualPrice)}</p>
+          {course.actualPrice < course.price && <p className="text-xs text-slate-400 line-through">{money(course.price)}</p>}
+        </div>
+          {session?.user?.id ? (
+          <FreeSessionModal
+            course={{
+              type:type,
+              id: String(course._id ?? course.id),
+              slug: course.slug,
+              name: course.name,
+            }}
+          />
+        ) : (
+          <Link
+            href={`/auth?callbackUrl=${encodeURIComponent(
+              `/learning/${type.slice(0, -1)}/${course.slug}`
+            )}`}
+            className="mt-0 flex items-center justify-center gap-2 px-5 rounded-full bg-[#0039bd] py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#ccfc3b] hover:text-black"
+          >
+            Book A Free Session <MonitorCheck size={15} />
+          </Link>
         )}
       </div>
     </div>

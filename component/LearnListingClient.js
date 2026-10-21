@@ -202,20 +202,94 @@ export default function LearnListingClient({
       {f.tools && <FilterGroup title="Tools & technologies" options={options.tools} selected={selected("tools")} onToggle={(v) => toggle("tools", v)} />}
       {f.level && <FilterGroup title="Level" options={options.levels} selected={selected("level")} onToggle={(v) => toggle("level", v)} />}
       {f.duration && <FilterGroup title="Duration" options={options.durations} selected={selected("duration")} onToggle={(v) => toggle("duration", v)} />}
-      {f.price && (
-        <section className="border-b border-slate-200 py-4">
-          <h3 className="text-sm font-semibold text-[#060B1F]">Price range</h3>
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-600"><span>{money(priceDraft[0])}</span><span>{money(priceDraft[1])}</span></div>
-          <div className="mt-3 space-y-3">
-            <label className="block text-xs text-slate-500">Minimum price
-              <input type="range" min="0" max={priceMax} step="100" value={Math.min(priceDraft[0], priceDraft[1])} onChange={(e) => setPriceDraft(([, max]) => [Math.min(Number(e.target.value), max), max])} onPointerUp={commitPrice} onTouchEnd={commitPrice} className="mt-2 w-full accent-[#0039bd]" />
-            </label>
-            <label className="block text-xs text-slate-500">Maximum price
-              <input type="range" min="0" max={priceMax} step="100" value={Math.max(priceDraft[1], priceDraft[0])} onChange={(e) => setPriceDraft(([min]) => [min, Math.max(Number(e.target.value), min)])} onPointerUp={commitPrice} onTouchEnd={commitPrice} className="mt-2 w-full accent-[#0039bd]" />
-            </label>
-          </div>
-        </section>
-      )}
+
+{f.price && (
+  <section className="border-b border-slate-200 py-5">
+    <div className="flex items-center justify-between">
+      <h3 className="text-sm font-semibold text-[#060B1F]">
+        Price range
+      </h3>
+      <span className="rounded-md bg-blue-50 px-2 py-1 text-[10px] font-semibold text-[#0039bd]">
+        Up to ₹3,500
+      </span>
+    </div>
+
+    <div className="mt-4 flex items-center justify-between gap-3">
+      <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+        <p className="text-[10px] text-slate-400">Minimum</p>
+        <p className="mt-0.5 text-sm font-semibold text-[#060B1F]">
+          {money(priceDraft[0])}
+        </p>
+      </div>
+
+      <span className="h-px flex-1 bg-slate-200" />
+
+      <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right">
+        <p className="text-[10px] text-slate-400">Maximum</p>
+        <p className="mt-0.5 text-sm font-semibold text-[#060B1F]">
+          {money(priceDraft[1])}
+        </p>
+      </div>
+    </div>
+
+    <div className="relative mx-2 mb-4 mt-7 h-2">
+      <div className="absolute inset-0 rounded-full bg-slate-200" />
+
+      <div
+        className="absolute h-2 rounded-full bg-[#0039bd]"
+        style={{
+          left: `${(priceDraft[0] / 3500) * 100}%`,
+          right: `${100 - (priceDraft[1] / 3500) * 100}%`,
+        }}
+      />
+
+      <input
+        type="range"
+        min={0}
+        max={3500}
+        step={100}
+        value={priceDraft[0]}
+        onChange={(e) =>
+          setPriceDraft(([min, max]) => [
+            Math.min(Number(e.target.value), max),
+            max,
+          ])
+        }
+        onPointerUp={commitPrice}
+        onTouchEnd={commitPrice}
+        aria-label="Minimum price"
+        className="dual-range-input"
+      />
+
+      <input
+        type="range"
+        min={0}
+        max={3500}
+        step={100}
+        value={priceDraft[1]}
+        onChange={(e) =>
+          setPriceDraft(([min, max]) => [
+            min,
+            Math.max(Number(e.target.value), min),
+          ])
+        }
+        onPointerUp={commitPrice}
+        onTouchEnd={commitPrice}
+        aria-label="Maximum price"
+        className="dual-range-input"
+      />
+    </div>
+
+    <div className="flex justify-between text-[10px] font-medium text-slate-400">
+      <span>₹0</span>
+      <span>₹1,000</span>
+      <span>₹2,000</span>
+      <span>₹3,500+</span>
+    </div>
+  </section>
+)}
+
+
     </>
   );
 

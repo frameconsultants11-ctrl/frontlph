@@ -10,7 +10,7 @@ const COLUMNS = [
     title: "Platform",
     links: [
       { label: "Learnings", href: "/courses" },
-      { label: "Certification Prep.", href: "/certification-prep" },
+      { label: "Certification Prep.", href: "/certifications" },
       { label: "Interview Prep.", href: "/interview-prep" },
       { label: "Career Counseling", href: "/career-counseling" },
       { label: "Projects", href: "/projects" },
@@ -31,7 +31,6 @@ const COLUMNS = [
     links: [
       { label: "Blog", href: "/blog" },
       { label: "Free Resources", href: "/free-resources" },
-      { label: "Roadmap", href: "/roadmap" },
       { label: "FAQs", href: "/faqs" },
       { label: "Support", href: "/support" },
     ],
@@ -43,7 +42,6 @@ const COLUMNS = [
       { label: "Terms of Use", href: "/terms" },
       { label: "Refund Policy", href: "/refund-policy" },
       { label: "Cookie Policy", href: "/cookie-policy" },
-      { label: "Security", href: "/security" },
     ],
   },
 ];
@@ -100,7 +98,7 @@ export default function Footer() {
 
         {/* ================= COPYRIGHT ================= */}
         <div className="flex flex-col gap-3 border-t border-white/15 py-7 text-sm text-blue-100/70 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 LearnPerHour. All rights reserved.</p>
+          <p>© 2026 LearnPerHour. All rights reserved.  Developed and Maintained By <Link href="https://giptechnologies.com/" title="gip technologies" className="text-white">GIP Technologies</Link></p>
           <p className="flex flex-wrap gap-x-1.5">
             <Link href="/terms" className="underline underline-offset-2 transition-colors hover:text-white">
               Terms of Service

@@ -139,7 +139,7 @@ function RelatedCard({ course }) {
     >
       {course.image ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={course.image} alt="" className="aspect-video w-full object-cover" />
+        <img src={course.image} alt="" className="aspect-5/2 w-full object-cover" />
       ) : (
         <div className="aspect-video w-full bg-blue-50" />
       )}
@@ -326,7 +326,7 @@ export default async function CourseDetailPage({session, type, params }) {
           {related.length > 0 && (
             <section className="mt-12 border-t border-slate-200 pt-10">
               <h2 className="text-2xl font-semibold text-[#060B1F]">
-                More {subCategory ? `${subCategory.name} ` : ""}courses
+                More {category ? `${category.name} ` : ""}courses
               </h2>
               <div className="mt-5 grid gap-5 sm:grid-cols-2">
                 {related.map((item) => <RelatedCard key={item.id} course={item} />)}
@@ -337,15 +337,7 @@ export default async function CourseDetailPage({session, type, params }) {
       </div>
 
       {/* ===================== MOBILE BUY BAR ===================== */}
-      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-4 border-t border-slate-200 bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] lg:hidden">
-        <div>
-          <p className="text-xl font-bold text-[#060B1F]">{money(course.actualPrice)}</p>
-          {course.actualPrice < course.price && <p className="text-xs text-slate-400 line-through">{money(course.price)}</p>}
-        </div>
-        <Link href={ENROLL_HREF(course.slug)} className="rounded-xl bg-[#0039bd] px-8 py-3 text-sm font-semibold text-white">
-          Enrol now
-        </Link>
-      </div>
+      
     </div>
   );
 }

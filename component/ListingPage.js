@@ -108,7 +108,7 @@ if (data.isAll) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema).replace(/</g, "\\u003c") }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema).replace(/</g, "\\u003c") }} />
-      <div className="h-78 sm:h-74 bg-gradient-to-b from-[#0039bd] via-[#3162d3] to-[#ffff] mt-15 pt-4">
+      <div className="h-78 sm:h-74 bg-gradient-to-b from-[#0039bd] via-[#3162d3] to-[#ffff] mt-15 pt-4 font-sans">
         <nav aria-label="Breadcrumb" className="mb-2 text-xs text-slate-400 max-w-7xl mx-auto px-4 sm:px-0">
           <ol className="flex flex-wrap items-center gap-2">
             {crumbs.map((c, i) => (
@@ -123,7 +123,7 @@ if (data.isAll) {
             ))}
           </ol>
         </nav>
-        <header className="mb-8 rounded-3xl max-w-7xl mx-auto px-4 sm:px-0">
+        <header className="mb-8 rounded-3xl max-w-7xl mx-auto px-4 sm:px-0 font-sans">
           <p className="text-xs mt-8 font-bold uppercase text-[#ccfc3b]">{cfg.label} library</p>
           <h1 className="mt-3 max-w-4xl text-2xl font-semibold leading-tight tracking-tight text-[#ffffff] sm:text-4xl lg:text-4xl">
             Learn {content.seoTitle || `Learn ${heading} Online`}

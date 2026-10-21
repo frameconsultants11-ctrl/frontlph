@@ -77,7 +77,7 @@ function isActivePath(pathname, href) {
 function Logo({ expanded }) {
   return (
     <Link
-      href="/dashboard"
+      href="/"
       className="flex h-[58px] items-center px-3"
     >
     <Image src="/2.png" alt="logo" height={40} width={150} />

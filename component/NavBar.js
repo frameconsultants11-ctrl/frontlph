@@ -7,8 +7,15 @@ import Image from 'next/image';
 import { ArrowUpRight, Menu, X, ChevronDown, BookOpen, Wrench, LayoutTemplate, ShieldCheck } from 'lucide-react';
 
 /* ============================================================
-   NAV LINKS  (menu: which mega menu opens on hover)
+   THEME TOKENS (light beige)
+   nav / mobile bg ... #F5EFE2
+   panel gradient .... #FBF7EE -> #F5EFE2
+   hover / strip ..... #EDE5D3
+   borders ........... #E3D9C3
+   ink ............... #060B1F
+   accent ............ #0039bd
 ============================================================ */
+
 const NAV_LINKS = [
   { label: 'Learnings', href: '/courses', menu: 'learn' },
   { label: 'Certification Prep.', href: '/certifications', menu: 'cert' },
@@ -19,7 +26,7 @@ const NAV_LINKS = [
 
 const MENUS = {
   learn: {
-    width: 'w-[min(1200px,100%)]',
+    width: 'w-[min(1400px,100%)]',
     footer: 'Explore everything we teach',
     columns: [
       { type: 'courses', title: 'Courses', sub: 'courses', Icon: BookOpen },
@@ -67,10 +74,11 @@ function useMenuData() {
 }
 
 /* ============================================================
-   SMALL PIECES  (dark theme)
+   SMALL PIECES
 ============================================================ */
 const Logo = () => (
   <Link href="/" className="flex items-center gap-2.5" aria-label="Learn Per Hour home">
+    {/* NOTE: use a dark/colored version of the logo here — a white logo won't show on beige */}
     <Image src="/1.png" alt="logo" height={40} width={150} />
   </Link>
 );
@@ -78,33 +86,32 @@ const Logo = () => (
 const itemMeta = (item) =>
   item.hours > 0 ? `${item.hours} Hours` : `₹${Number(item.actualPrice).toLocaleString('en-IN')}`;
 
-/* item: image tile, bold title + level badge, two-line description */
 const MenuItem = ({ item, onNavigate }) => (
   <Link
     href={item.href}
     onClick={onNavigate}
-    className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-white/[0.06]"
+    className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-[#EDE5D3]"
   >
     {item.image ? (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={item.image} alt="" className="h-9 w-9 shrink-0 rounded-lg bg-white/10 object-contain p-1.5" />
+      <img src={item.image} alt="" className="h-9 w-9 shrink-0 rounded-lg border border-[#E3D9C3] bg-white object-contain p-1.5" />
     ) : (
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/10 text-sm font-bold text-[#ccfc3b]">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[#0039bd]/10 text-sm font-bold text-[#0039bd]">
         {item.name?.[0]?.toUpperCase()}
       </span>
     )}
     <span className="min-w-0 flex-1">
       <span className="flex items-center gap-2">
-        <span className="truncate text-sm font-semibold text-white transition-colors group-hover:text-[#ccfc3b]">
+        <span className="truncate text-sm font-semibold text-[#060B1F] transition-colors group-hover:text-[#0039bd]">
           {item.name}
         </span>
         {item.level && (
-          <span className="shrink-0 rounded-full bg-white/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white/70">
+          <span className="shrink-0 rounded-full bg-[#0039bd]/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#0039bd]">
             {item.level}
           </span>
         )}
       </span>
-      <span className="mt-0.5 block text-xs truncate line-clamp-1 leading-relaxed text-white/50">
+      <span className="mt-0.5 block truncate text-xs leading-relaxed text-stone-500">
         {item.description || itemMeta(item)}
       </span>
     </span>
@@ -115,28 +122,27 @@ const Skeleton = ({ rows = 5 }) => (
   <div className="space-y-2">
     {Array.from({ length: rows }).map((_, i) => (
       <div key={i} className="flex items-start gap-3 p-2.5">
-        <div className="h-9 w-9 animate-pulse rounded-lg bg-white/10" />
+        <div className="h-9 w-9 animate-pulse rounded-lg bg-[#E9E0CC]" />
         <div className="flex-1 space-y-2">
-          <div className="h-3 w-2/3 animate-pulse rounded bg-white/10" />
-          <div className="h-2.5 w-full animate-pulse rounded bg-white/5" />
+          <div className="h-3 w-2/3 animate-pulse rounded bg-[#E9E0CC]" />
+          <div className="h-2.5 w-full animate-pulse rounded bg-[#E9E0CC]/70" />
         </div>
       </div>
     ))}
   </div>
 );
 
-/* items + category chips for one section (desktop + mobile) */
 const MenuList = ({ section, loading, error, onRetry, onNavigate }) => {
   if (loading) return <Skeleton />;
   if (error) {
     return (
-      <p className="px-2 py-4 text-sm text-white/60">
+      <p className="px-2 py-4 text-sm text-stone-500">
         Couldn’t load this menu.{' '}
-        <button type="button" onClick={onRetry} className="font-semibold text-[#ccfc3b] hover:underline">Retry</button>
+        <button type="button" onClick={onRetry} className="font-semibold text-[#0039bd] hover:underline">Retry</button>
       </p>
     );
   }
-  if (!section?.items?.length) return <p className="px-2 py-4 text-sm text-white/40">Nothing here yet.</p>;
+  if (!section?.items?.length) return <p className="px-2 py-4 text-sm text-stone-400">Nothing here yet.</p>;
 
   return (
     <>
@@ -146,16 +152,16 @@ const MenuList = ({ section, loading, error, onRetry, onNavigate }) => {
 
       {section.categories?.length > 0 && (
         <div className="mt-4 px-2.5">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-white/40">Browse by category</p>
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-stone-400">Browse by category</p>
           <div className="flex flex-wrap gap-1.5">
             {section.categories.map((c) => (
               <Link
                 key={c.id}
                 href={c.href}
                 onClick={onNavigate}
-                className="rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 text-xs font-medium text-white/90 transition-colors hover:border-[#ccfc3b] hover:bg-[#ccfc3b] hover:text-black"
+                className="rounded-md border border-[#E0D6BF] bg-[#FBF7EE] px-2.5 py-1 text-xs font-medium text-stone-700 transition-colors hover:border-[#0039bd] hover:bg-[#0039bd] hover:text-white"
               >
-                {c.name} <span className="ml-0.5 text-white/40">{c.count}</span>
+                {c.name} <span className="ml-0.5 text-stone-400">{c.count}</span>
               </Link>
             ))}
           </div>
@@ -165,12 +171,11 @@ const MenuList = ({ section, loading, error, onRetry, onNavigate }) => {
   );
 };
 
-/* lime "view all" pill */
 const ViewAllPill = ({ href, label, onNavigate }) => (
   <Link
     href={href}
     onClick={onNavigate}
-    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#ccfc3b] px-4 py-2 text-xs font-semibold text-[#060B1F] transition-colors hover:bg-white"
+    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#0039bd] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#ccfc3b] hover:text-[#060B1F]"
   >
     {label}
     <ArrowUpRight size={13} strokeWidth={2.5} />
@@ -178,7 +183,7 @@ const ViewAllPill = ({ href, label, onNavigate }) => (
 );
 
 /* ============================================================
-   DESKTOP MEGA MENU  (dark blue)
+   DESKTOP MEGA MENU
 ============================================================ */
 const DesktopMegaMenu = ({ menu, menuData, onMouseEnter, onMouseLeave, onNavigate }) => {
   const def = menu ? MENUS[menu] : null;
@@ -196,7 +201,7 @@ const DesktopMegaMenu = ({ menu, menuData, onMouseEnter, onMouseLeave, onNavigat
             transition={{ duration: 0.18, ease: 'easeOut' }}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
-            className={`pointer-events-auto overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0039bd] via-[#2547c2] to-[#050B24] ${def.width}`}
+            className={`pointer-events-auto overflow-hidden rounded-3xl border border-[#E3D9C3] bg-gradient-to-b from-[#fcf9f3] to-[#F5EFE2] shadow-[0_24px_60px_-24px_rgba(90,70,30,0.35)] ${def.width}`}
           >
             <div
               className="grid gap-x-10 gap-y-6 px-7 pb-5 pt-6"
@@ -206,9 +211,8 @@ const DesktopMegaMenu = ({ menu, menuData, onMouseEnter, onMouseLeave, onNavigat
                 const section = data?.[col.type];
                 return (
                   <section key={col.type} className="min-w-0">
-                    {/* muted title + thin line + view all */}
-                    <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
-                      <h2 className="flex items-center gap-2.5 text-lg font-medium text-white/90">
+                    <div className="flex items-center justify-between gap-3 border-b border-[#E3D9C3] pb-3">
+                      <h2 className="flex items-center gap-2.5 text-lg font-semibold text-[#060B1F]">
                         <span className="grid h-7 w-7 place-items-center rounded-lg bg-[#0039bd] text-white">
                           <col.Icon size={15} />
                         </span>
@@ -217,7 +221,7 @@ const DesktopMegaMenu = ({ menu, menuData, onMouseEnter, onMouseLeave, onNavigat
                       <Link
                         href={section?.viewAll || '/'}
                         onClick={onNavigate}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#ccfc3b] transition-colors hover:text-white"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#0039bd] transition-colors hover:text-[#060B1F]"
                       >
                         View all <ArrowUpRight size={13} strokeWidth={2.5} />
                       </Link>
@@ -231,9 +235,8 @@ const DesktopMegaMenu = ({ menu, menuData, onMouseEnter, onMouseLeave, onNavigat
               })}
             </div>
 
-            {/* footer strip with all "view all" options */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 bg-black/25 px-7 py-3.5">
-              <p className="text-sm text-white/80">{def.footer}</p>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#E3D9C3] bg-[#EDE5D3] px-7 py-3.5">
+              <p className="text-sm font-medium text-stone-600">{def.footer}</p>
               <div className="flex flex-wrap items-center gap-2">
                 {def.columns.map((col) => {
                   const section = data?.[col.type];
@@ -256,7 +259,7 @@ const DesktopMegaMenu = ({ menu, menuData, onMouseEnter, onMouseLeave, onNavigat
 };
 
 /* ============================================================
-   MOBILE MENU  (dark)
+   MOBILE MENU
 ============================================================ */
 const Accordion = ({ open, children }) => (
   <AnimatePresence initial={false}>
@@ -282,18 +285,18 @@ const MobileSection = ({ col, menuData, expanded, onToggle, onNavigate }) => {
       <button
         type="button"
         onClick={onToggle}
-        className={`flex w-full items-center justify-between rounded-xl px-2 py-2.5 text-sm font-semibold text-white ${
-          expanded ? 'bg-white/10' : ''
+        className={`flex w-full items-center justify-between rounded-xl px-2 py-2.5 text-sm font-semibold text-[#060B1F] ${
+          expanded ? 'bg-[#EDE5D3]' : ''
         }`}
       >
         <span className="flex items-center gap-3">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#0039bd] text-white"><col.Icon size={16} /></span>
           {col.title}
         </span>
-        <ChevronDown size={16} className={`mr-1 text-white/50 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+        <ChevronDown size={16} className={`mr-1 text-stone-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
       </button>
       <Accordion open={expanded}>
-        <div className="mt-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+        <div className="mt-2 rounded-2xl border border-[#E3D9C3] bg-[#FBF7EE] p-3">
           <MenuList section={section} loading={loading} error={error} onRetry={retry} onNavigate={onNavigate} />
           <div className="mt-4 px-2.5">
             <ViewAllPill href={section?.viewAll || '/'} label={`View all ${col.title}`} onNavigate={onNavigate} />
@@ -316,25 +319,25 @@ const MobileMenu = ({ isOpen, onClose, session, menuData }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.22, ease: 'easeOut' }}
-          className="fixed inset-0 z-40 overflow-y-auto bg-gradient-to-b from-[#071A5E] to-[#050B24] px-5 pb-10 pt-[88px] lg:hidden"
+          className="fixed inset-0 z-40 overflow-y-auto bg-[#F5EFE2] px-5 pb-10 pt-[88px] lg:hidden"
         >
           <div className="mx-auto max-w-lg">
             {NAV_LINKS.map((link) => {
               const def = link.menu ? MENUS[link.menu] : null;
               const expanded = openLink === link.label;
               return (
-                <div key={link.label} className="border-b border-white/10">
+                <div key={link.label} className="border-b border-[#E3D9C3]">
                   {def ? (
                     <button
                       type="button"
                       onClick={() => setOpenLink(expanded ? null : link.label)}
-                      className="flex w-full items-center justify-between py-4 text-[15px] font-medium text-white"
+                      className="flex w-full items-center justify-between py-4 text-[15px] font-medium text-[#060B1F]"
                     >
                       {link.label}
-                      <ChevronDown size={18} className={`text-white/50 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+                      <ChevronDown size={18} className={`text-stone-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
                     </button>
                   ) : (
-                    <a href={link.href} onClick={onClose} className="block py-4 text-[15px] font-medium text-white">
+                    <a href={link.href} onClick={onClose} className="block py-4 text-[15px] font-medium text-[#060B1F]">
                       {link.label}
                     </a>
                   )}
@@ -362,15 +365,15 @@ const MobileMenu = ({ isOpen, onClose, session, menuData }) => {
             <div className="mt-8 flex flex-col gap-3">
               {!session ? (
                 <>
-                  <Link href="/auth" onClick={onClose} className="rounded-full border border-white/20 py-3 text-center text-sm font-medium text-white">
+                  <Link href="/auth" onClick={onClose} className="rounded-full border border-[#D8CDB3] py-3 text-center text-sm font-medium text-[#e6e9f3]">
                     Login
                   </Link>
-                  <Link href="/auth" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#ccfc3b] py-3 text-sm font-semibold text-[#060B1F]">
+                  <Link href="/auth" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#0039bd] py-3 text-sm font-semibold text-white">
                     Register now <ArrowUpRight size={16} />
                   </Link>
                 </>
               ) : (
-                <Link href="/dashboard" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#ccfc3b] py-3 text-sm font-semibold text-[#060B1F]">
+                <Link href="/dashboard" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#0039bd] py-3 text-sm font-semibold text-white">
                   {session.user.name} <ArrowUpRight size={16} />
                 </Link>
               )}
@@ -386,7 +389,7 @@ const MobileMenu = ({ isOpen, onClose, session, menuData }) => {
    NAVBAR
 ============================================================ */
 export default function Navbar({ session }) {
-  const [activeMenu, setActiveMenu] = useState(null); // 'learn' | 'cert' | null
+  const [activeMenu, setActiveMenu] = useState(null);
   const [hovered, setHovered] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -440,10 +443,12 @@ export default function Navbar({ session }) {
     <MotionConfig reducedMotion="user">
       <nav
         className={`fixed top-0 z-50 w-full border-b bg-[#0039bd] font-sans transition-all duration-300 ${
-          scrolled ? 'border-white/10 py-3' : 'border-transparent py-1.5'
+          scrolled
+            ? 'border-[#E3D9C3] py-3 shadow-[0_8px_24px_-16px_rgba(90,70,30,0.25)]'
+            : 'border-transparent py-1.5'
         }`}
       >
-        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-0 md:px-8">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 md:px-8">
           <div className="shrink-0"><Logo /></div>
 
           {/* desktop links */}
@@ -459,13 +464,13 @@ export default function Navbar({ session }) {
                     onMouseEnter={() => openMenu(link)}
                     onFocus={() => openMenu(link)}
                     className={`relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                      active ? 'text-white' : 'text-white/70'
+                      active ? 'text-[#ffff]' : 'text-[#ffff]/65'
                     }`}
                   >
                     {active && (
                       <motion.span
                         layoutId="nav-hover-pill"
-                        className="absolute inset-0 rounded-full border border-white/30 bg-white/10"
+                        className="absolute inset-0 rounded-full border border-[#ffff]/10 bg-[#ffff]/5"
                         transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                       />
                     )}
@@ -486,10 +491,10 @@ export default function Navbar({ session }) {
           <div className="hidden items-center gap-5 lg:flex">
             {!session ? (
               <>
-                <a href="/auth" className="text-sm font-medium text-white/80 transition-colors hover:text-white">Login</a>
+                <a href="/auth" className="text-sm font-medium text-[#ffff]/70 transition-colors hover:text-[#fff]">Login</a>
                 <button
                   type="button"
-                  className="flex items-center gap-2 rounded-full bg-[#ccfc3b] px-5 py-2 text-sm font-semibold text-[#060B1F] transition-colors hover:bg-[#c4f035]"
+                  className="flex items-center gap-2 rounded-full bg-[#0039bd] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#ccfc3b] hover:text-[#060B1F]"
                 >
                   Register now <ArrowUpRight size={15} strokeWidth={2.5} />
                 </button>
@@ -497,7 +502,7 @@ export default function Navbar({ session }) {
             ) : (
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 rounded-full bg-[#ccfc3b] px-5 py-2 text-sm font-semibold text-[#060B1F] transition-colors hover:bg-[#c4f035]"
+                className="flex items-center gap-2 rounded-full bg-[#0039bd] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#ccfc3b] hover:text-[#060B1F]"
               >
                 {session.user.name} <ArrowUpRight size={15} strokeWidth={2.5} />
               </Link>
@@ -509,7 +514,7 @@ export default function Navbar({ session }) {
             type="button"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setMobileOpen((v) => !v)}
-            className="rounded-full border border-white/15 p-2 text-white lg:hidden"
+            className="rounded-full border border-[#060B1F]/15 p-2 text-[#060B1F] lg:hidden"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>

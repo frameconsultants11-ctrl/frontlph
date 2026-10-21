@@ -39,7 +39,7 @@ const project = (lat, lng) => ({
 
 const curve = (a, b) => {
   const midX = (a.x + b.x) / 2;
-  const midY = Math.min(a.y, b.y) - Math.max(30, Math.abs(a.x - b.x) * 0.18);
+  const midY = Math.min(a.y, b.y) - Math.max(60, Math.abs(a.x - b.x) * 0.48);
   return `M ${a.x} ${a.y} Q ${midX} ${midY} ${b.x} ${b.y}`;
 };
 
@@ -157,7 +157,7 @@ export default function GlobalReach({
 
         <dl className="relative mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-4 text-center">
+            <div key={s.label} className="px-4 py-4 text-center">
               <dt className="sr-only">{s.label}</dt>
               <dd className="text-2xl font-bold text-white sm:text-3xl">{s.value}</dd>
               <p className="mt-1 text-xs text-white/50">{s.label}</p>
